@@ -7,6 +7,6 @@ Administrator::Administrator(int adminID, string name, string password, string e
 	this->email = email;
 }
 
-bool Administrator::login(string name, string password) {
+bool Administrator::login(string name, string password) const {
 	return this->name == name && this->password == password;
 }
