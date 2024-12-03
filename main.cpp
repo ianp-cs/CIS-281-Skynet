@@ -33,14 +33,9 @@ int main() {
   
     Administrator admin(1, "Bill", "BillyBob123", "BabyBilly@gmail.com"); //create an admin
 
-    Account acct1(011, "Phil Hartman", "Phartman@gmail.com", "123 Cropdust Ln", 5203421243); //create accounts
-    Account acct2(012, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", 5203450989);
-    Account acct3(013, "Micheal Jordan", "theRealGooooaaat@gmail.com", "345 Rand Ave", 5203094953);
-    
-    Member member1(acct1.getID(), acct1.getName(), acct1.getEmail(), acct1.getAddress(), acct1.getPhoneNum(),  10.0);  //initialize members with accounts
-    Member member2(acct2.getID(), acct2.getName(), acct2.getEmail(),  acct2.getAddress(), acct2.getPhoneNum(), 20.0);
-    Member member3(acct3.getID(), acct3.getName(), acct3.getEmail(), acct3.getAddress(), acct3.getPhoneNum(), 20.0);
-
+    Member member1(011, "Phil Hartman", "Phartman@gmail.com", "123 Cropdust Ln", 5203421243);  //initialize members with accounts
+    Member member2(012, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", 5203450989)
+    Member member3(013, "Micheal Jordan", "theRealGooooaaat@gmail.com", "345 Rand Ave", 5203094953);
    Observer observer1(acct2.getID(), acct2.getName(), acct2.getEmail(), acct2.getAddress(), acct2.getPhoneNum(), 20.0, 0); //initialize observer
 
     Lab lab1(001, "Faceting", 0, 0); //initialize labs
