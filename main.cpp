@@ -36,7 +36,8 @@ int main() {
     Member member1(011, "Phil Hartman", "Phartman@gmail.com", "123 Cropdust Ln", 5203421243);  //initialize members with accounts
     Member member2(012, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", 5203450989)
     Member member3(013, "Micheal Jordan", "theRealGooooaaat@gmail.com", "345 Rand Ave", 5203094953);
-   Observer observer1(acct2.getID(), acct2.getName(), acct2.getEmail(), acct2.getAddress(), acct2.getPhoneNum(), 20.0, 0); //initialize observer
+   
+    Observer observer1(12, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", 5203450989, 0);
 
     Lab lab1(001, "Faceting", 0, 0); //initialize labs
     Lab lab2(002, "Lapidary", 0, 0);
