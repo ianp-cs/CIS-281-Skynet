@@ -41,7 +41,7 @@ int main() {
     Member member2(acct2.getID(), acct2.getName(), acct2.getEmail(),  acct2.getAddress(), acct2.getPhoneNum(), 20.0);
     Member member3(acct3.getID(), acct3.getName(), acct3.getEmail(), acct3.getAddress(), acct3.getPhoneNum(), 20.0);
 
-    Observer observer1(acct2, 0, nullptr); //initialize observer
+   Observer observer1(acct2.getID(), acct2.getName(), acct2.getEmail(), acct2.getAddress(), acct2.getPhoneNum(), 20.0, 0); //initialize observer
 
     Lab lab1(001, "Faceting", 0, 0); //initialize labs
     Lab lab2(002, "Lapidary", 0, 0);
@@ -52,9 +52,12 @@ int main() {
     addMemberToLab(member2, lab2);
     observer1.setAssignedLab(lab1)
 
+    cout << "Observer Report: "<< endl;
     observer1.pullReport();
+    cout << "Lab Report: " << endl;
     lab1.pullReport();
-
+    cout << "Member 2 Report: " << endl;
+    member2.pullReport();
 
 
 
