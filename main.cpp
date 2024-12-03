@@ -72,7 +72,7 @@ int main() {
     addMembertoLab(member5, lab3);
     addMembertoLab(member5, lab2);
     addMembertoLab(member6, lab2);
-    addMembertoLab(member4, lab3)
+    addMembertoLab(member4, lab3);
     observer1.setAssignedLab(lab1);
     observer2.setAssignedLab(lab2);
     observer3.setAssignedLab(lab3);
