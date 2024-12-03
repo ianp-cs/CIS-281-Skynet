@@ -23,7 +23,7 @@ Ian			11/29/2024	Created Administrator, Account, Member, Observer, and Lab class
 
 using namespace std;
 
-void addMemberToLab(Member& member, Lab& lab) {
+void addMembertoLab(Member& member, Lab& lab) {
     lab.addMember(member); //add member to lab member list
     member.addLab(lab); //add lab to members lab list
 }
