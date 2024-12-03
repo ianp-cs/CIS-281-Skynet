@@ -9,6 +9,7 @@ CHANGE HISTORY
 Programmer	Date		Description of Change
 ---------------------------------------------
 Ian			11/29/2024	Created Administrator, Account, Member, Observer, and Lab classes
+Marie       12/02/2024  Created main
 */
 
 #include <iostream>
@@ -46,7 +47,7 @@ int main() {
     cout << "Welcome, Menu options: " << endl;
 
     Member member1(011, "Phil Hartman", "Phartman@gmail.com", "123 Cropdust Ln", 3421243);  //initialize members with accounts
-    Member member2(012, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", 3450989)
+    Member member2(012, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", 3450989);
     Member member3(013, "Micheal Jordan", "theRealGooooaaat@gmail.com", "345 Rand Ave", 3094953);
     Member member4(014, "Mary Prescott", "Mprescott@gmail.com", "325 S Sunset Ln", 5989765);
     Member member5(015, "Robert Jackson", "MrJackson11@yahoo.com", "435 S Cherrywood Ln", 3453245);
