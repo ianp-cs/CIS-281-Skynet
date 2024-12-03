@@ -33,9 +33,12 @@ int main() {
   
     Administrator admin(1, "Bill", "BillyBob123", "BabyBilly@gmail.com"); //create an admin
 
-    Member member1(011, "Phil Hartman", "Phartman@gmail.com", "123 Cropdust Ln", 5203421243);  //initialize members with accounts
-    Member member2(012, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", 5203450989)
-    Member member3(013, "Micheal Jordan", "theRealGooooaaat@gmail.com", "345 Rand Ave", 5203094953);
+    Member member1(011, "Phil Hartman", "Phartman@gmail.com", "123 Cropdust Ln", 3421243);  //initialize members with accounts
+    Member member2(012, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", 3450989)
+    Member member3(013, "Micheal Jordan", "theRealGooooaaat@gmail.com", "345 Rand Ave", 3094953);
+    Member member4(14, "Mary Prescott", "Mprescott@gmail.com", "325 S Sunset Ln", 5989765);
+    Member member5(15, "Robert Jackson", "MrJackson11@yahoo.com", "435 S Cherrywood Ln", 3453245);
+    Member member6(16, "Boyd Crowder", "crawDaddy@yahoo.com", "643 Grizzly Lane", 4503495);
    
     Observer observer1(12, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", 5203450989, 0);
 
