@@ -14,8 +14,8 @@ TODO!!!
 #include <list>
 #include <string>
 #include "Account.h"
-#include "Lab.h"
 using namespace std;
+
 
 class Member : protected Account {
 
@@ -33,7 +33,7 @@ public:
 /* GETTERS + SETTERS */
 
 	// Returns the labList data member
-	list<Lab> getLabList() const;
+	//list<Lab*> getLabList() const;
 
 	// Returns the labHours data member
 	double getLabHours() const;
@@ -45,14 +45,14 @@ public:
 	Preconditions:	The Lab is not already in this Member's labList.
 	Postconditions:	The Member's labList contains the added Lab.
 	*/
-	void addLab(Lab lab);
+	//void addLab(Lab* lab);
 
 	/*
 	This method removes the input Lab paramter from the Member's lablist if it is in the labList.
 	Precondition:	The Lab is in the Member's labList.
 	Postcondition:	The Lab is no longer in the Member's labList.
 	*/
-	void removeLab(Lab lab);
+	//void removeLab(Lab* lab);
 
 	/*
 	This method reduces the input amount of hours from this Member's labHours, so long as it doesn't bring their 
@@ -86,8 +86,10 @@ public:
 	*/
 	void pullReport() const;
 
+	bool operator==(const Member& otherMember) const;
+
 private:
-	list<Lab> labList;
+	//list<Lab*> labList;
 	double labHours;
 	
 };

@@ -10,21 +10,21 @@ Member::Member(int accountID, string name, string email, string address, int pho
 	this->labHours = labHours;
 }
 
-list<Lab> Member::getLabList() const {
-	return this->labList;
-}
+//list<Lab*> Member::getLabList() const {
+//	return this->labList;
+//}
 
 double Member::getLabHours() const {
 	return this->labHours;
 }
 
-void Member::addLab(Lab lab) {
-	this->labList.push_back(lab);
-}
+//void Member::addLab(Lab* lab) {
+//	this->labList.push_back(lab);
+//}
 
-void Member::removeLab(Lab lab) {
-	this->labList.remove(lab);
-}
+//void Member::removeLab(Lab* lab) {
+//	this->labList.remove(lab);
+//}
 
 void Member::spendLabHours(double hours) {
 	this->labHours -= hours;
@@ -48,12 +48,10 @@ void Member::pullReport() const {
 	cout << "Email: " << this->getEmail() << endl;
 	cout << "Address: " << this->getAddress() << endl;
 	cout << "Phone: " << this->getPhoneNum() << endl;
-	cout << "Available Lab Hours: " << this->getLabHours() << endl << endl;
-
-	cout << "Registered Labs" << endl;
-	cout << "-----------------------" << endl;
-	for (list<Lab>::iterator lab = this->getLabList().begin(); lab != this->getLabList().end(); lab++) {
-		cout << lab->toString() << endl;
-	}
+	cout << "Available Lab Hours: " << this->getLabHours() << endl;
 	cout << "***********************" << endl << endl;
+}
+
+bool Member::operator==(const Member& otherMember) const {
+	return this->getID() == otherMember.getID();
 }

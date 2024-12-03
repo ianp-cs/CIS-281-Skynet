@@ -80,8 +80,8 @@ void Lab::pullReport() {
 
 	cout << "Member List" << endl;
 	cout << "-----------------------" << endl;
-	for (list<Member>::iterator member = this->getMemberList().begin(); member != this->getMemberList().end(); member++) {
-		cout << member->toString() << endl;
+	for (auto const& member : this->memberList) {
+		cout << member.toString() << endl;
 	}
 	cout << "***********************" << endl << endl;
 }

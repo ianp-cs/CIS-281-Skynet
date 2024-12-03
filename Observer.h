@@ -12,7 +12,6 @@ TODO!!!
 #include <iostream>
 #include <string>
 #include "Member.h"
-#include "Lab.h"
 using namespace std;
 
 class Observer : protected Member {
@@ -27,15 +26,15 @@ public:
 /* CONSTRUCTORS + DESTRUCTORS*/
 	Observer();
 
-	Observer(int accountID, string name, string email, string address, int phoneNum, double labHours, Lab assignedLab);
+	Observer(int accountID, string name, string email, string address, int phoneNum, double labHours);
 
 /* GETTERS + SETTERS */
 	
 	// Returns the assignedLab data member
-	Lab getAssignedLab() const;
+	//Lab getAssignedLab() const;
 
 	// Sets the assignedLab data member
-	void setAssignedLab(Lab lab);
+	//void setAssignedLab(Lab lab);
 
 /* OTHER METHODS */
 
@@ -56,7 +55,7 @@ public:
 	void pullReport() const;
 
 private:
-	Lab assignedLab;
+	//Lab assignedLab;
 };
 
 #endif

@@ -24,18 +24,17 @@ Marie       12/02/2024  Created main
 
 using namespace std;
 
-void addMembertoLab(Member member, Lab lab) {
+void addMembertoLab(Member& member, Lab& lab) {
     lab.addMember(member); //add member to lab member list
-    member.addLab(lab); //add lab to members lab list
+    //member.addLab(lab); //add lab to members lab list
 }
-
 
 int main() {
   
     Administrator admin(1, "Bill", "BillyBob123", "BabyBilly@gmail.com"); //create an admin
 
     cout << "Administrator Login: " << endl;
-    string name, string password;
+    string name, password;
     cout << "Enter Username: " ;
     cin >> name;
     cout << "Enter Password: ";
@@ -44,26 +43,21 @@ int main() {
         cout << "Login failed, try again " << endl;
         return 1;
     }
-    cout << "Welcome, Menu options: " << endl;
 
-    Member member1(011, "Phil Hartman", "Phartman@gmail.com", "123 Cropdust Ln", 3421243);  //initialize members with accounts
-    Member member2(012, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", 3450989);
-    Member member3(013, "Micheal Jordan", "theRealGooooaaat@gmail.com", "345 Rand Ave", 3094953);
-    Member member4(014, "Mary Prescott", "Mprescott@gmail.com", "325 S Sunset Ln", 5989765);
-    Member member5(015, "Robert Jackson", "MrJackson11@yahoo.com", "435 S Cherrywood Ln", 3453245);
-    Member member6(016, "Boyd Crowder", "crawDaddy@yahoo.com", "643 Grizzly Lane", 4503495);
+    Member member1(11, "Phil Hartman", "Phartman@gmail.com", "123 Cropdust Ln", 3421243, 0.0);  //initialize members with accounts
+    Member member2(12, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", 3450989, 10.0);
+    Member member3(13, "Micheal Jordan", "theRealGooooaaat@gmail.com", "345 Rand Ave", 3094953, 12.2);
+    Member member4(14, "Mary Prescott", "Mprescott@gmail.com", "325 S Sunset Ln", 5989765, 20.5);
+    Member member5(15, "Robert Jackson", "MrJackson11@yahoo.com", "435 S Cherrywood Ln", 3453245, 7);
+    Member member6(16, "Boyd Crowder", "crawDaddy@yahoo.com", "643 Grizzly Lane", 4503495, 19);
    
-    Observer observer1(012, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", 3450989, 0, 0);
-    Observer observer2(015,  "Robert Jackson", "MrJackson11@yahoo.com", "435 S Cherrywood Ln", 3453245, 0, 0); 
-    Observer observer3(016, "Boyd Crowder", "crawDaddy@yahoo.com", "643 Grizzly Lane", 4503495);
+    Observer observer1(17, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", 3450989, 0);
+    Observer observer2(18,  "Robert Jackson", "MrJackson11@yahoo.com", "435 S Cherrywood Ln", 3453245, 5.0); 
+    Observer observer3(19, "Boyd Crowder", "crawDaddy@yahoo.com", "643 Grizzly Lane", 4503495, 2.5);
    
-    
-    Lab lab1(001, "Faceting", 0, 0); //initialize labs
-    Lab lab2(002, "Lapidary", 0, 0);
-    Lab lab3(003, "Blacksmithing", 0, 0);
-
-
-
+    Lab lab1(1, "Faceting", 50, Observer()); //initialize labs
+    Lab lab2(2, "Lapidary", 75.2, Observer());
+    Lab lab3(3, "Blacksmithing", 19.5, Observer());
 
     addMembertoLab(member1, lab1);
     addMembertoLab(member2, lab1);
@@ -72,12 +66,7 @@ int main() {
     addMembertoLab(member5, lab3);
     addMembertoLab(member5, lab2);
     addMembertoLab(member6, lab2);
-    addMembertoLab(member4, lab3)
-    observer1.setAssignedLab(lab1);
-    observer2.setAssignedLab(lab2);
-    observer3.setAssignedLab(lab3);
-
-    
+    addMembertoLab(member4, lab3);
 
     cout << "Observer Report: "<< endl;
     observer1.pullReport();
@@ -89,8 +78,4 @@ int main() {
     member2.pullReport();
 
     return 0;
-
-
-
-
 }
