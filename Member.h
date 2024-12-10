@@ -17,7 +17,7 @@ TODO!!!
 using namespace std;
 
 
-class Member : protected Account {
+class Member : public Account {
 
 	/* 
 	This class represents a Member of the Old Pueblo Lapidary Club. It stores the Member's contact information, a list 

@@ -14,7 +14,7 @@ TODO!!!
 #include "Member.h"
 using namespace std;
 
-class Observer : protected Member {
+class Observer : public Member {
 
 	/* 
 	This class represents a Observer of the Old Pueblo Lapidary Club. It stores the Observer's contact information, a 
