@@ -11,11 +11,12 @@ TODO!!!
 #define MEMBER_H
 
 #include <iostream>
-#include <list>
 #include <string>
 #include "Account.h"
 using namespace std;
 
+class Lab;
+#define MAX_LABS 10
 
 class Member : public Account {
 
@@ -28,12 +29,17 @@ public:
 /* CONSTRUCTORS + DESTRUCTORS*/
 	Member();
 
-	Member(int accountID, string name, string email, string address, int phoneNum, double labHours);
+	Member(const int& accountID, const string& name, const string& email, const string& address, const int& phoneNum, 
+		const double& labHours);
+
+	Member(const Member& member);
+
+	~Member();
 
 /* GETTERS + SETTERS */
 
 	// Returns the labList data member
-	//list<Lab*> getLabList() const;
+	Lab* getLabsList() const;
 
 	// Returns the labHours data member
 	double getLabHours() const;
@@ -45,14 +51,14 @@ public:
 	Preconditions:	The Lab is not already in this Member's labList.
 	Postconditions:	The Member's labList contains the added Lab.
 	*/
-	//void addLab(Lab* lab);
+	void addLab(Lab* lab);
 
 	/*
 	This method removes the input Lab paramter from the Member's lablist if it is in the labList.
 	Precondition:	The Lab is in the Member's labList.
 	Postcondition:	The Lab is no longer in the Member's labList.
 	*/
-	//void removeLab(Lab* lab);
+	void removeLab(Lab* lab);
 
 	/*
 	This method reduces the input amount of hours from this Member's labHours, so long as it doesn't bring their 
@@ -61,14 +67,14 @@ public:
 					positive value.
 	Postcondition:	The Member's labHours has had hours subtracted from it.
 	*/
-	void spendLabHours(double hours);
+	void spendLabHours(const double& hours);
 
 	/*
 	This method adds the input amount of hours to this Member's labHours.
 	Precondition:	The hours parameter should be a positive value.
 	Postcondition:	The Member's labHours has had hours added to it.
 	*/
-	void refundLabHours(double hours);
+	void refundLabHours(const double& hours);
 
 	/*
 	This method returns some data members of the Member as a string. It is intended to be used whenever the Member's 
@@ -88,10 +94,15 @@ public:
 
 	bool operator==(const Member& otherMember) const;
 
-private:
-	//list<Lab*> labList;
+	Member& operator=(const Member& otherMember);
+
+protected:
 	double labHours;
-	
+	Lab* labsList[MAX_LABS]{ nullptr };
+	int listSize{ 0 };
+
+private:
+	void shiftListElements(const int& pos);
 };
 
 #endif

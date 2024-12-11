@@ -155,13 +155,28 @@ void initializeLists(list<Member>& memberList, list<Observer>& observerList, lis
     Lab lab2(2, "Lapidary", 75.2, Observer());
     Lab lab3(3, "Blacksmithing", 19.5, Observer());
 
-    lab1.addMember(member1);
-    lab1.addMember(member2);
-    lab1.addMember(member3);
+    auto itr = memberList.begin();
 
-    lab2.addMember(member2);
-    lab2.addMember(member5);
-    lab2.addMember(member6);
+    // Member 1
+    lab1.addMember(*itr);
+
+    // Member 2
+    itr++;
+    lab1.addMember(*itr);
+    lab2.addMember(*itr);
+
+    // Member 3
+    itr++;
+    lab1.addMember(*itr);
+
+    // Member 5
+    itr++;
+    itr++;
+    lab2.addMember(*itr);
+
+    // Member 6
+    itr++;
+    lab2.addMember(*itr);
 
     labList.push_back(lab1);
     labList.push_back(lab2);
@@ -285,7 +300,8 @@ void labMenu(list<Member>& memberList, list<Observer>& observerList, list<Lab>& 
         cout << "2) Add a Lab" << endl;
         cout << "3) Edit a Lab" << endl;
         cout << "4) Remove a Lab" << endl;
-        cout << "5) Return to Main Menu" << endl << endl;
+        cout << "5) Add Member to Lab" << endl;
+        cout << "6) Return to Main Menu" << endl << endl;
 
         cout << "Enter a menu option: ";
         cin >> userInput;
@@ -306,6 +322,9 @@ void labMenu(list<Member>& memberList, list<Observer>& observerList, list<Lab>& 
 
             break;
         case 5:
+
+            break;
+        case 6:
             validInput = true;
             cout << "Returning to main menu..." << endl << endl;
             break;

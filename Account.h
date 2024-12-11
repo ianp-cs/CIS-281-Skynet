@@ -17,7 +17,9 @@ public:
 /* CONSTRUCTORS + DESTRUCTORS*/
 	Account();
 
-	Account(int accountID, string name, string email, string address, int phoneNum);
+	Account(const int& accountID, const string& name, const string& email, const string& address, const int& phoneNum);
+
+	Account(const Account& account);
 
 /* GETTERS + SETTERS */
 
@@ -25,31 +27,31 @@ public:
 	int getID() const;
 
 	// Sets the accountID data member
-	void setID(int accountID);
+	void setID(const int& accountID);
 
 	// Returns the name data member
 	string getName() const;
 
 	// Sets the name data member
-	void setName(string name);
+	void setName(const string& name);
 
 	// Returns the email data member
 	string getEmail() const;
 
 	// Sets the email data member
-	void setEmail(string email);
+	void setEmail(const string& email);
 
 	// Returns the address data member
 	string getAddress() const;
 	
 	// Sets the address data member
-	void setAddress(string address);
+	void setAddress(const string& address);
 
 	// Returns the phoneNum data member
 	int getPhoneNum() const;
 
 	// Sets the phoneNum data member
-	void setPhoneNum(int phoneNum);
+	void setPhoneNum(const int& phoneNum);
 
 /* OTHER METHODS */
 

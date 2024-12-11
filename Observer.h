@@ -26,15 +26,20 @@ public:
 /* CONSTRUCTORS + DESTRUCTORS*/
 	Observer();
 
-	Observer(int accountID, string name, string email, string address, int phoneNum, double labHours);
+	Observer(const int& accountID, const string& name, const string& email, const string& address, const int& phoneNum, 
+		const double& labHours);
+
+	Observer(const Observer& observer);
+
+	~Observer();
 
 /* GETTERS + SETTERS */
 	
 	// Returns the assignedLab data member
-	//Lab getAssignedLab() const;
+	Lab* getAssignedLab() const;
 
 	// Sets the assignedLab data member
-	//void setAssignedLab(Lab lab);
+	void setAssignedLab(Lab* lab);
 
 /* OTHER METHODS */
 
@@ -54,8 +59,10 @@ public:
 	*/
 	void pullReport() const;
 
+	Observer& operator=(const Observer& otherObserver);
+
 private:
-	//Lab assignedLab;
+	Lab* assignedLab;
 };
 
 #endif
