@@ -14,37 +14,39 @@ Ian         12/06/2024  Added further functionality to memberMenu.
 */
 
 #include <iostream>
-#include <string>
 #include <list>
 #include "Account.h"
 #include "Administrator.h"
 #include "Lab.h"
 #include "Observer.h"
 #include "Member.h"
-
 using namespace std;
 
 // Startup
 void userLogin();
 void initializeLists(list<Member>& memberList, list<Observer>& observerList, list<Lab>& labList);
-
-// Main Menu
 void memberMenu(list<Member>& memberList, list<Observer>& observerList);
+
+// Main Menu Functions
 void labMenu(list<Member>& memberList, list<Observer>& observerList, list<Lab>& labList);
 void reportMenu(list<Member>& memberList, list<Observer>& observerList, list<Lab>& labList);
 
-// Member Menu
+// Member Menu Functions
 void printMembersList(list<Member>& memberList, list<Observer>& observerList);
 void addMember(list<Member>& memberList);
 
-// Lab Menu
+// Lab Menu Functions
 
 
-// Report Menu
+// Report Menu Functions
 void pullMemberReport(list<Member>& memberList, list<Observer>& observerList);
 void pullLabReport(list<Lab>& labList);
 void pullAllMembersReport(list<Member>& memberList, list<Observer>& observerList);
 void pullAllLabsReport(list<Lab>& labList);
+
+// Processing Functions
+void addMemberToLab(Member& member, Lab& lab);
+void assignObserverToLab(Observer& observer, Lab& lab);
 
 int main() {
     list<Member> memberList;
@@ -80,9 +82,11 @@ int main() {
             reportMenu(memberList, observerList, labList);
             break;
         case 4:
+            validInput = true;
             cout << "Closing the program..." << endl << endl;
             break;
         default:
+            validInput = false;
             cout << "Invalid input. Please try again." << endl << endl;
         }
     }
@@ -151,36 +155,69 @@ void initializeLists(list<Member>& memberList, list<Observer>& observerList, lis
     observerList.push_back(observer3);
 
     // Initiailize Labs
-    Lab lab1(1, "Faceting", 50, Observer()); 
-    Lab lab2(2, "Lapidary", 75.2, Observer());
-    Lab lab3(3, "Blacksmithing", 19.5, Observer());
+    Lab lab1(1, "Faceting", 50, nullptr); 
+    Lab lab2(2, "Lapidary", 75.2, nullptr);
+    Lab lab3(3, "Blacksmithing", 19.5, nullptr);
 
-    auto itr = memberList.begin();
+    // Assign Observers to Labs
+    auto itr1 = observerList.begin();
+
+    // Observer1 -> Lab1
+    lab1.setObserver(&*itr1);
+
+    // Observer2 -> Lab2
+    itr1++;
+    lab2.setObserver(&*itr1);
+
+    // Observer3 -> Lab3
+    itr1++;
+    lab3.setObserver(&*itr1);
+
+    // Add Members to Labs
+    auto itr2 = memberList.begin();
 
     // Member 1
-    lab1.addMember(*itr);
+    addMemberToLab(*itr2, lab1);
 
     // Member 2
-    itr++;
-    lab1.addMember(*itr);
-    lab2.addMember(*itr);
+    itr2++;
+    addMemberToLab(*itr2, lab1);
+    addMemberToLab(*itr2, lab2);
 
     // Member 3
-    itr++;
-    lab1.addMember(*itr);
+    itr2++;
+    addMemberToLab(*itr2, lab1);
 
     // Member 5
-    itr++;
-    itr++;
-    lab2.addMember(*itr);
+    itr2++;
+    itr2++;
+    addMemberToLab(*itr2, lab2);
 
     // Member 6
-    itr++;
-    lab2.addMember(*itr);
+    itr2++;
+    addMemberToLab(*itr2, lab2);
 
     labList.push_back(lab1);
     labList.push_back(lab2);
     labList.push_back(lab3);
+
+    // Assign Labs to Observers
+    itr1 = observerList.begin();
+    auto itr3 = labList.begin();
+
+    // Lab1 -> Observer 1
+    assignObserverToLab(*itr1, *itr3);
+    itr3++;
+    addMemberToLab(*itr1, *itr3);
+
+    // Lab2 -> Observer 2
+    itr1++;
+    assignObserverToLab(*itr1, *itr3);
+
+    // Lab3 -> Observer 3
+    itr1++;
+    itr3++;
+    assignObserverToLab(*itr1, *itr3);
 }
 
 /*
@@ -389,40 +426,30 @@ This helper function takes a user input Member ID and uses it to print the Membe
 TO DO: Add input verification and error handling.
 */
 void pullMemberReport(list<Member>& memberList, list<Observer>& observerList) {
-    Member target;
     int memberID;
-    bool validInput{ false };
 
     cout << "Enter the Member's ID to pull their report: ";
     cin >> memberID;
 
     cout << endl;
 
-    for (Member member : memberList) {
-        if (member.getID() == memberID) {
-            target = member;
-            validInput = true;
-            break;
+    for (auto itr{ memberList.begin() }; itr != memberList.end(); ++itr) {
+        if ((*itr).getID() == memberID) {
+            cout << "Member Report" << endl;
+            (*itr).pullReport();
+            return;
         }
     }
 
-    if (validInput == false) {
-        for (Observer observer : observerList) {
-            if (observer.getID() == memberID) {
-                target = observer;
-                validInput = true;
-                break;
-            }
+    for (auto itr{ observerList.begin() }; itr != observerList.end(); ++itr) {
+        if ((*itr).getID() == memberID) {
+            cout << "Member Report" << endl;
+            (*itr).pullReport();
+            return;
         }
     }
 
-    if (validInput == true) {
-        cout << "Member Report" << endl;
-        target.pullReport();
-    }
-    else {
-        cout << "That Member ID doesn't exist. Returning to previous menu..." << endl << endl;
-    }
+    cout << "That Member ID doesn't exist. Returning to previous menu..." << endl << endl;
 }
 
 /*
@@ -489,4 +516,19 @@ void pullAllLabsReport(list<Lab>& labList) {
     for (Lab lab : labList) {
         lab.pullReport();
     }
+}
+
+/*
+This function takes the member and lab parameter and adds them to each others' respective lists.
+Preconditions:  none
+Postconditions: member has been added to lab's memberList and lab has been added to member's labsList
+*/
+void addMemberToLab(Member& member, Lab& lab) {
+    member.addLab(&lab);
+    lab.addMember(&member);
+}
+
+void assignObserverToLab(Observer& observer, Lab& lab) {
+    observer.setAssignedLab(&lab);
+    lab.setObserver(&observer);
 }

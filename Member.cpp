@@ -1,4 +1,5 @@
 #include "Member.h"
+#include "observer.h"
 #include "Lab.h"
 
 Member::Member() : Account() {
@@ -12,8 +13,6 @@ Member::Member(const int& accountID, const string& name, const string& email, co
 }
 
 Member::Member(const Member& member) {
-	Lab* ptr = member.getLabsList();
-
 	this->setID(member.getID());
 	this->setName(member.getName());
 	this->setEmail(member.getEmail());
@@ -90,9 +89,9 @@ string Member::toString() const {
 }
 
 void Member::pullReport() const {
-	cout << "***********************" << endl;
+	cout << "********************************************" << endl;
 	cout << this->getName() << endl;
-	cout << "-----------------------" << endl;
+	cout << "----------------------" << endl;
 	cout << "ID: " << this->getID() << endl;
 	cout << "Email: " << this->getEmail() << endl;
 	cout << "Address: " << this->getAddress() << endl;
@@ -100,12 +99,20 @@ void Member::pullReport() const {
 	cout << "Available Lab Hours: " << this->getLabHours() << endl << endl;
 
 	cout << "Labs List" << endl;
-	cout << "-----------------------" << endl;
-	for (int i{ 0 }; i < this->listSize; i++) {
-		Lab* lab = this->labsList[i];
-		cout << lab->toString() << endl;
+	cout << "----------------------" << endl;
+	if (this->listSize > 0) {
+		cout << "Lab ID     Lab Type          Observer" << endl;
+		cout << "--------------------------------------------" << endl;
+		for (int i{ 0 }; i < this->listSize; i++) {
+			Lab* lab = this->labsList[i];
+			cout << left << setw(11) << to_string(lab->getID()) << setw(18) << lab->getType() <<
+				lab->getObserver()->getName() << endl;
+		}
 	}
-	cout << "***********************" << endl << endl;
+	else {
+		cout << "This Member is not attending any Labs." << endl;
+	}
+	cout << "********************************************" << endl << endl;
 }
 
 bool Member::operator==(const Member& otherMember) const {

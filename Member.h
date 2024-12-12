@@ -11,6 +11,7 @@ TODO!!!
 #define MEMBER_H
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include "Account.h"
 using namespace std;
@@ -27,13 +28,18 @@ class Member : public Account {
 
 public:
 /* CONSTRUCTORS + DESTRUCTORS*/
+
+	// Default Constructor
 	Member();
 
+	// Constructor with parameters
 	Member(const int& accountID, const string& name, const string& email, const string& address, const int& phoneNum, 
 		const double& labHours);
 
+	// Copy Constructor
 	Member(const Member& member);
 
+	// Destructor
 	~Member();
 
 /* GETTERS + SETTERS */
@@ -92,16 +98,27 @@ public:
 	*/
 	void pullReport() const;
 
+/* OVERLOADED OPERATORS */
+
 	bool operator==(const Member& otherMember) const;
 
 	Member& operator=(const Member& otherMember);
 
 protected:
-	double labHours;
-	Lab* labsList[MAX_LABS]{ nullptr };
-	int listSize{ 0 };
+/* DATA MEMBERS */
+
+	double labHours;						// Available hours the Member has to "spend" on labs
+	Lab* labsList[MAX_LABS]{ nullptr };		// The list of all Labs the Member is scheduled to attend
+	int listSize{ 0 };						// The size of labsList
 
 private:
+/* OTHER METHODS */
+
+	/*
+	This helper function is called to shift left all elements to the right of pos in the labsList array.
+	Preconditions:	none
+	Postconditions:	all elements to the right of pos in labsList are shifted left
+	*/
 	void shiftListElements(const int& pos);
 };
 

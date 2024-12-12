@@ -3,6 +3,7 @@
 /*
 TODO!!!
 
+- Add error detection and error handling to this class' methods! But we don't need this for the prototype.
 - Adjust formatting of output as necessary.
 */
 
@@ -24,14 +25,16 @@ class Observer : public Member {
 
 public:
 /* CONSTRUCTORS + DESTRUCTORS*/
+
+	// Default Constructor
 	Observer();
 
+	// Constructor with parameters
 	Observer(const int& accountID, const string& name, const string& email, const string& address, const int& phoneNum, 
 		const double& labHours);
 
+	// Copy Constructor
 	Observer(const Observer& observer);
-
-	~Observer();
 
 /* GETTERS + SETTERS */
 	
@@ -59,10 +62,14 @@ public:
 	*/
 	void pullReport() const;
 
+/* OVERLOADED OPERATORS */
+
 	Observer& operator=(const Observer& otherObserver);
 
 private:
-	Lab* assignedLab;
+/* DATA MEMBERS */
+
+	Lab* assignedLab;	// The Lab that the Observer is assigned to
 };
 
 #endif

@@ -15,10 +15,14 @@ class Account {
 
 public:
 /* CONSTRUCTORS + DESTRUCTORS*/
+
+	// Default Constructor
 	Account();
 
+	// Constructor with parameters
 	Account(const int& accountID, const string& name, const string& email, const string& address, const int& phoneNum);
 
+	// Copy Constructor
 	Account(const Account& account);
 
 /* GETTERS + SETTERS */
@@ -65,6 +69,7 @@ public:
 
 private:
 /* DATA MEMBERS */
+
 	int accountID;	// Unique identifier for account
 	string name;	// Name of club member
 	string email;	// Email for club member

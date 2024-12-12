@@ -25,18 +25,12 @@ Observer::Observer(const Observer& observer) {
 	}
 }
 
-Observer::~Observer() {
-	for (int i{ 0 }; i < this->listSize; i++) {
-		delete this->labsList[i];
-	}
-}
-
 Lab* Observer::getAssignedLab() const {
 	return this->assignedLab;
 }
 
 void Observer::setAssignedLab(Lab* lab) {
-	this->assignedLab = assignedLab;
+	this->assignedLab = lab;
 }
 
 string Observer::toString() const {
@@ -46,15 +40,37 @@ string Observer::toString() const {
 }
 
 void Observer::pullReport() const {
-	cout << "***********************" << endl;
+	cout << "********************************************" << endl;
 	cout << this->getName() << endl;
-	cout << "-----------------------" << endl;
+	cout << "----------------------" << endl;
 	cout << "ID: " << this->getID() << endl;
 	cout << "Email: " << this->getEmail() << endl;
 	cout << "Address: " << this->getAddress() << endl;
 	cout << "Phone: " << this->getPhoneNum() << endl;
 	cout << "Available Lab Hours: " << this->getLabHours() << endl;
-	cout << "***********************" << endl << endl;
+	if (this->getAssignedLab() != nullptr) {
+		cout << "Assigned Lab: " << this->getAssignedLab()->getType() << " (ID: " <<
+			to_string(this->getAssignedLab()->getID()) << ")" << endl << endl;
+	}
+	else {
+		cout << "Assigned Lab: No Lab Assigned" << endl << endl;
+	}
+
+	cout << "Labs List" << endl;
+	cout << "----------------------" << endl;
+	if (this->listSize > 0) {
+		cout << "Lab ID     Lab Type          Observer" << endl;
+		cout << "--------------------------------------------" << endl;
+		for (int i{ 0 }; i < this->listSize; i++) {
+			Lab* lab = this->labsList[i];
+			cout << left << setw(11) << to_string(lab->getID()) << setw(18) << lab->getType() <<
+				lab->getObserver()->getName() << endl;
+		}
+	}
+	else {
+		cout << "This Member is not attending any Labs." << endl;
+	}
+	cout << "********************************************" << endl << endl;
 }
 
 Observer& Observer::operator=(const Observer& otherObserver) {

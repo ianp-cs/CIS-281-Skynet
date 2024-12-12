@@ -1,14 +1,15 @@
 #include "Lab.h"
-#include <algorithm>
+#include "Member.h"
+#include "Observer.h"
 
 Lab::Lab() {
 	this->labID = 0;
 	this->type = "NO TYPE";
 	this->totalHours = 0;
-	this->observer = Observer();
+	this->setObserver(nullptr);
 }
 
-Lab::Lab(const int& labID, const string& type, const double& totalHours, const Observer& observer) {
+Lab::Lab(const int& labID, const string& type, const double& totalHours, Observer* observer) {
 	this->setID(labID);
 	this->setType(type);
 	this->totalHours = totalHours;
@@ -20,7 +21,16 @@ Lab::Lab(const Lab& lab) {
 	this->setType(lab.getType());
 	this->totalHours = lab.getTotalHours();
 	this->setObserver(lab.getObserver());
-	this->memberList = lab.getMemberList();
+	
+	for (int i{ 0 }; i < lab.listSize; i++) {
+		this->addMember(lab.memberList[i]);
+	}
+}
+
+Lab::~Lab() {
+	for (int i{ 0 }; i < this->listSize; i++) {
+		delete this->memberList[i];
+	}
 }
 
 int Lab::getID() const {
@@ -43,16 +53,16 @@ double Lab::getTotalHours() const {
 	return this->totalHours;
 }
 
-Observer Lab::getObserver() const {
+Observer* Lab::getObserver() const {
 	return this->observer;
 }
 
-void Lab::setObserver(const Observer& observer) {
+void Lab::setObserver(Observer* observer) {
 	this->observer = observer;
 }
 
-list<Member> Lab::getMemberList() const {
-	return this->memberList;
+Member* Lab::getMemberList() const {
+	return this->memberList[0];
 }
 
 void Lab::addHours(const double& hours) {
@@ -67,33 +77,74 @@ void Lab::resetHours() {
 	this->totalHours = 0;
 }
 
-void Lab::addMember(Member& member) {
-	this->memberList.push_back(member);
-	member.addLab(this);
+void Lab::addMember(Member* member) {
+	if (this->listSize == MAX_MEMBERS) {
+		cout << "Failed to add Member. This Lab's Members list is full." << endl << endl;
+		return;
+	}
+
+	for (int i{ 0 }; i < this->listSize; i++) {
+		if (member == this->memberList[i]) {
+			cout << "Failed to add Member. Member is already in Lab's Members list." << endl << endl;
+			return;
+		}
+	}
+
+	Member* newMember = new Member(*member);
+	this->memberList[listSize] = newMember;
+	this->listSize++;
 }
 
-void Lab::removeMember(Member& member) {
-	this->memberList.remove(member);
+void Lab::removeMember(Member* member) {
+	if (this->listSize == 0) {
+		cout << "Failed to remove Member. This Lab's Member list is empty." << endl << endl;
+		return;
+	}
+
+	for (int i{ 0 }; i < this->listSize; i++) {
+		if (member == this->memberList[i]) {
+			this->shiftListElements(i);
+			this->listSize--;
+			return;
+		}
+	}
+
+	cout << "Failed to remove Member. Member is not in Lab's Members list." << endl << endl;
 }
 
 string Lab::toString() {
 	// Add and adjust formatting as necessary
-	return to_string(this->getID()) + " " + this->getType();
+	return to_string(this->getID()) + " " + this->getType() + " " + this->getObserver()->getName();
 }
 
 void Lab::pullReport() {
-	cout << "***********************" << endl;
+	cout << "********************************************" << endl;
 	cout << "Lab " << this->getID() << endl;
-	cout << "-----------------------" << endl;
+	cout << "----------------------" << endl;
 	cout << "Type: " << this->getType() << endl;
+	if (this->getObserver() != nullptr) {
+		cout << "Observer: " << this->getObserver()->getName() << " (ID: " << this->getObserver()->getID() << ")" << endl;
+	}
+	else {
+		cout << "Observer: None Assigned" << endl;
+	}
 	cout << "Total Hours: " << this->getTotalHours() << endl << endl;
 
-	cout << "Member List" << endl;
-	cout << "-----------------------" << endl;
-	for (auto const& member : this->memberList) {
-		cout << member.toString() << endl;
+	cout << "Members List" << endl;
+	cout << "----------------------" << endl;
+	if (this->listSize > 0) {
+		cout << "Member ID     Name                  Email                            Phone #" << endl;
+		cout << "-------------------------------------------------------------------------------" << endl;
+		for (int i{ 0 }; i < this->listSize; i++) {
+			Member* member = this->memberList[i];
+			cout << left << setw(14) << to_string(member->getID()) << setw(22) << member->getName() << setw(33) <<
+				member->getEmail() << to_string(member->getPhoneNum()) << endl;
+		}
 	}
-	cout << "***********************" << endl << endl;
+	else {
+		cout << "This Member is not attending any Labs." << endl;
+	}
+	cout << "********************************************" << endl << endl;
 }
 
 Lab& Lab::operator=(const Lab& otherLab) {
@@ -101,7 +152,30 @@ Lab& Lab::operator=(const Lab& otherLab) {
 	this->setType(otherLab.getType());
 	this->totalHours = otherLab.getTotalHours();
 	this->setObserver(otherLab.getObserver());
-	this->memberList = otherLab.getMemberList();
+
+	for (int i{ 0 }; i < otherLab.listSize; i++) {
+		this->addMember(otherLab.memberList[i]);
+	}
 
 	return *this;
+}
+
+bool Lab::operator==(const Lab& otherLab) const {
+	return this->getID() == otherLab.getID();
+}
+
+void Lab::shiftListElements(const int& pos) {
+	if (pos == MAX_MEMBERS - 1) { // If pos is the last element in memberList
+		this->memberList[pos] = nullptr;
+	}
+	else if (this->listSize == 1) { // If pos is the only element in the list
+		this->memberList[pos] = nullptr;
+	}
+	else {
+		for (int i{ pos }; i < this->listSize - 1; i++) {
+			this->memberList[i] = this->memberList[i + 1];
+		}
+
+		this->memberList[this->listSize - 1] = nullptr;
+	}
 }
