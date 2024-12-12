@@ -16,6 +16,8 @@ Ian         12/06/2024  Added further functionality to memberMenu.
 #include <iostream>
 #include <string>
 #include <list>
+#include <fstream>
+
 #include "Account.h"
 #include "Administrator.h"
 #include "Lab.h"
@@ -27,7 +29,7 @@ using namespace std;
 // Startup
 void userLogin();
 void initializeLists(list<Member>& memberList, list<Observer>& observerList, list<Lab>& labList);
-
+void saveData()
 // Main Menu
 void memberMenu(list<Member>& memberList, list<Observer>& observerList);
 void labMenu(list<Member>& memberList, list<Observer>& observerList, list<Lab>& labList);
@@ -38,7 +40,7 @@ void printMembersList(list<Member>& memberList, list<Observer>& observerList);
 void addMember(list<Member>& memberList);
 
 // Lab Menu
-
+void printLabsList()
 
 // Report Menu
 void pullMemberReport(list<Member>& memberList, list<Observer>& observerList);
@@ -126,25 +128,22 @@ TO DO: This function should be replaced with one that pulls data from all files 
 */
 void initializeLists(list<Member>& memberList, list<Observer>& observerList, list<Lab>& labList) {
 
+    // Initialize files
+    ifstream memberFile("member.txt");
+    ifstream observerFile("observer.txt);
+    ifstream labFile("lab.txt");
+    
     // Initialize Members
-    Member member1(11, "Phil Hartman", "Phartman@gmail.com", "123 Cropdust Ln", 3421243, 0.0);  
-    Member member2(12, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", 3450989, 10.0);
-    Member member3(13, "Micheal Jordan", "theRealGooooaaat@gmail.com", "345 Rand Ave", 3094953, 12.2);
-    Member member4(14, "Mary Prescott", "Mprescott@gmail.com", "325 S Sunset Ln", 5989765, 20.5);
-    Member member5(15, "Robert Jackson", "MrJackson11@yahoo.com", "435 S Cherrywood Ln", 3453245, 7);
-    Member member6(16, "Boyd Crowder", "crawDaddy@yahoo.com", "643 Grizzly Lane", 4503495, 19);
-
-    memberList.push_back(member1);
-    memberList.push_back(member2);
-    memberList.push_back(member3);
-    memberList.push_back(member4);
-    memberList.push_back(member5);
-    memberList.push_back(member6);
-
-    // Initialize Members
-    Observer observer1(17, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", 3450989, 0);
-    Observer observer2(18, "Robert Jackson", "MrJackson11@yahoo.com", "435 S Cherrywood Ln", 3453245, 5.0);
-    Observer observer3(19, "Boyd Crowder", "crawDaddy@yahoo.com", "643 Grizzly Lane", 4503495, 2.5);
+    if (memberFile.is_open())
+    {    
+        string line;
+        while (getline(memberFile, line)) {
+            istringstream ss(line);
+            int id, phoneNum;
+            string name, email, address;
+            double labHours;
+            ss >> id >> name >> address >> phoneNum >> labHours;
+            memberList
 
     observerList.push_back(observer1);
     observerList.push_back(observer2);
