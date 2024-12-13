@@ -131,7 +131,7 @@ void initializeLists(list<Member>& memberList, list<Observer>& observerList, lis
 
     // Initialize files
     ifstream memberFile("member.txt");
-    ifstream observerFile("observer.txt);
+    ifstream observerFile("observer.txt");
     ifstream labFile("lab.txt");
     
     // Initialize Members
@@ -155,16 +155,17 @@ void initializeLists(list<Member>& memberList, list<Observer>& observerList, lis
    if(labFile.is_open()){
     string line;
         while (getline(labFile, line)){
-            isstringstream ss(line);
+            istringstream ss(line);
             int id;
             string type;
             double totalHours;
             ss >> id >> type >> totalHours;
-            labList.push_back(id, type, totalHours)}
-        labFile.close();
-   } else {
+            labList.push_back(id, type, totalHours);}
+        labFile.close();}
+           else {
         cout << "Error, could not open lab file" << endl;
    }
+}
     if (observerFile.is_open())
     {
         string line;
@@ -177,38 +178,44 @@ void initializeLists(list<Member>& memberList, list<Observer>& observerList, lis
             ss >> id >> name >> address >> phoneNum >> labHours;
             observerList.push_back(id, name, email, address, phoneNum, labHours); }
         observerFile.close(); 
-    } else {
-        cout << "Error, could not open observer file!"; 
+    }    else {
+            cout << "Error, could not open observer file!"; 
     } 
 }
 */ This function writes data to the file /*
 void writeData(const list<Member>& memberList, const list<Observer>& observerList, const list<Lab>& labList) {
+   
     ofstream memberFile("member.txt");
     ofstream observerFile("observer.txt");
     ofstream labFile("labs.txt");
+    
     if (memberFile.is_open()){
         for (const auto& member:memberList) {
             memberFile << member.getID() << " " << member.getName() " " << member.getEmail() << " " 
-                << member.getPhoneNum() << " " << member.getLabHours() << " " << endl;
+             << member.getAddress() << " " << member.getPhoneNum() << " " << member.getLabHours() << " " << endl;
         }
         memberFile.close();
     } else {
-        cout << "Error, could not open file!" << endl;
+        cout << "Error, could not open file!" << endl;}
+        
+        }
     if (observerFile.is_open()) {
         for (const auto& observer:observerList) {
             observerFile << observer.getID() << " " << observer.getName() << " " << observer.getEmail() << " " 
                 << observer.getAddress() << " " << observer.getLabHours() << " " ; }
         observerFile.close();
         } else {
-            cout << "Error, could not open file!!"
+            cout << "Error, could not open file!!"}
+            }
     if (labFile.is_open()) { 
         for (const auto& lab:labList() {
         labFile << lab.getID() " " lab.getType() << " " << lab.getTotalHours() << " " << endl; 
         } 
         labFile.close();
             } else { 
-                cout << "Error: could not open file! " << endl; 
-
+                cout << "Error: could not open file! " << endl; }
+                }
+}
 
 
 */ This function displays the Member Menu and accepts and verifies commands from the user. Valid commands call helper 
