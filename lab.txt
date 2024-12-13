@@ -1,1 +1,6 @@
+134 Lapidary 100
+218 Silver 89
+435 Sawing 34
+93 Casting 49
+189 Faceting 61
 
