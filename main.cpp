@@ -17,6 +17,7 @@ Ian         12/06/2024  Added further functionality to memberMenu.
 #include <string>
 #include <list>
 #include <fstream>
+#include <sstream>
 
 #include "Account.h"
 #include "Administrator.h"
@@ -147,7 +148,8 @@ void initializeLists(list<Member>& memberList, list<Observer>& observerList, lis
         }
         memberFile.close();
     } else {
-        "Error, could not open  member file!!" }
+      cout << "Error, could not open  member file!!" << endl; 
+    }
     
     // Initiailize Labs
    if(labFile.is_open()){
