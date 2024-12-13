@@ -143,32 +143,73 @@ void initializeLists(list<Member>& memberList, list<Observer>& observerList, lis
             string name, email, address;
             double labHours;
             ss >> id >> name >> address >> phoneNum >> labHours;
-            memberList
-
-    observerList.push_back(observer1);
-    observerList.push_back(observer2);
-    observerList.push_back(observer3);
-
+            memberList.push_back(id, name, email, address, phoneNum, labHours);
+        }
+        memberFile.close();
+    } else {
+        "Error, could not open  member file!!" }
+    
     // Initiailize Labs
-    Lab lab1(1, "Faceting", 50, Observer()); 
-    Lab lab2(2, "Lapidary", 75.2, Observer());
-    Lab lab3(3, "Blacksmithing", 19.5, Observer());
+   if(labFile.is_open()){
+    string line;
+    while (getline(labFile, line)){
+        isstringstream ss(line);
+        int id;
+        string type;
+        double totalHours;
+        ss >> id >> type >> totalHours;
+        labList.push_back(id, type, totalHours)}
+    labFile.close();
+   } else {
+        cout << "Error, could not open lab file" << endl;
+   }
+    if (observerFile.is_open())
+    {
+        string line;
+        while (getline(observerFile, line)) {
+            istringstream ss(line);
+            int id, phoneNum;
+            string name, email, address;
+            doublelabHours;
 
-    lab1.addMember(member1);
-    lab1.addMember(member2);
-    lab1.addMember(member3);
-
-    lab2.addMember(member2);
-    lab2.addMember(member5);
-    lab2.addMember(member6);
-
-    labList.push_back(lab1);
-    labList.push_back(lab2);
-    labList.push_back(lab3);
+            ss >> id >> name >> address >> phoneNum >> labHours;
+            observerList.push_back(id, name, email, address, phoneNum, labHours); }
+        observerFile.close(); 
+    } else {
+        cout << "Error, could not open observer file!"; 
+    } 
 }
+*/ This function writes data to the file /*
+void writeData(const list<Member>& memberList, const list<Observer>& observerList, const list<Lab>& labList) {
+    ofstream memberFile("member.txt");
+    ofstream observerFile("observer.txt");
+    ofstream labFile("labs.txt");
+    if (memberFile.is_open()){
+        for (const auto& member:memberList) {
+            memberFile << member.getID() << " " << member.getName() " " << member.getEmail() << " " 
+                << member.getPhoneNum() << " " << member.getLabHours() << " " << endl;
+        }
+        memberFile.close();
+    } else {
+        cout << "Error, could not open file!" << endl;
+    if (observerFile.is_open()) {
+        for (const auto& observer:observerList) {
+            observerFile << observer.getID() << " " << observer.getName() << " " << observer.getEmail() << " " 
+                << observer.getAddress() << " " << observer.getLabHours() << " " ; }
+        observerFile.close();
+        } else {
+            cout << "Error, could not open file!!"
+    if (labFile.is_open()) { 
+        for (const auto& lab:labList() {
+        labFile << lab.getID() " " lab.getType() << " " << lab.getTotalHours() << " " << endl; 
+        } 
+        labFile.close();
+            } else { 
+                cout << "Error: could not open file! " << endl; 
 
-/*
-This function displays the Member Menu and accepts and verifies commands from the user. Valid commands call helper 
+
+
+*/ This function displays the Member Menu and accepts and verifies commands from the user. Valid commands call helper 
 functions or return to the main menu.
 
 TO DO: Make sure to add function calls for helper functions after they're made.
@@ -200,7 +241,7 @@ void memberMenu(list<Member>& memberList, list<Observer>& observerList) {
             addMember(memberList);
             break;
         case 3:
-
+            editMember()
             break;
         case 4:
 
