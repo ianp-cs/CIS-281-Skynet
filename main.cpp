@@ -154,14 +154,14 @@ void initializeLists(list<Member>& memberList, list<Observer>& observerList, lis
     // Initiailize Labs
    if(labFile.is_open()){
     string line;
-    while (getline(labFile, line)){
-        isstringstream ss(line);
-        int id;
-        string type;
-        double totalHours;
-        ss >> id >> type >> totalHours;
-        labList.push_back(id, type, totalHours)}
-    labFile.close();
+        while (getline(labFile, line)){
+            isstringstream ss(line);
+            int id;
+            string type;
+            double totalHours;
+            ss >> id >> type >> totalHours;
+            labList.push_back(id, type, totalHours)}
+        labFile.close();
    } else {
         cout << "Error, could not open lab file" << endl;
    }
@@ -237,7 +237,7 @@ void memberMenu(list<Member>& memberList, list<Observer>& observerList) {
 
         switch (userInput) {
         case 1:
-            printMembersList(memberList, observerList);
+            printMembersList(memberList, observerList, labList);
             break;
         case 2:
             addMember(memberList);
@@ -249,7 +249,7 @@ void memberMenu(list<Member>& memberList, list<Observer>& observerList) {
             removeMember(memberList)
             break;
         case 5:
-            
+            toggleObserverStatus(memberList, observerList, labList)
             break;
         case 6:
             validInput = true;
