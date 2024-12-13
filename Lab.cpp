@@ -142,7 +142,7 @@ void Lab::pullReport() {
 		}
 	}
 	else {
-		cout << "This Member is not attending any Labs." << endl;
+		cout << "This Lab has no Members." << endl;
 	}
 	cout << "********************************************" << endl << endl;
 }

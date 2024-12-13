@@ -14,7 +14,7 @@ Ian         12/06/2024  Added further functionality to memberMenu.
 */
 
 #include <iostream>
-#include <list>
+#include <array>
 #include "Account.h"
 #include "Administrator.h"
 #include "Lab.h"
@@ -22,40 +22,56 @@ Ian         12/06/2024  Added further functionality to memberMenu.
 #include "Member.h"
 using namespace std;
 
+#define MEMBER_ARR_SIZE 100
+#define LAB_ARR_SIZE 20
+
+static int memberListSize{ 0 };
+static int observerListSize{ 0 };
+static int labListSize{ 0 };
+
 // Startup
 void userLogin();
-void initializeLists(list<Member>& memberList, list<Observer>& observerList, list<Lab>& labList);
+void initializeLists(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList, 
+    array<Lab*, LAB_ARR_SIZE>& labList);
 
 // Main Menu Functions
-void memberMenu(list<Member>& memberList, list<Observer>& observerList);
-void labMenu(list<Member>& memberList, list<Observer>& observerList, list<Lab>& labList);
-void reportMenu(list<Member>& memberList, list<Observer>& observerList, list<Lab>& labList);
+void memberMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
+void labMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList, 
+    array<Lab*, LAB_ARR_SIZE>& labList);
+void reportMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList, 
+    array<Lab*, LAB_ARR_SIZE>& labList);
 
 // Member Menu Functions
-void printMembersList(list<Member>& memberList, list<Observer>& observerList);
-void addMember(list<Member>& memberList);
-void editMember(list<Member>& memberList, list<Observer>& observerList);
-void removeMember(list<Member>& memberList, list<Observer>& observerList);
-void toggleObserverStatus(list<Member>& memberList, list<Observer>& observerList);
+void printMembersList(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
+void addMember(array<Member*, MEMBER_ARR_SIZE>& memberList);
+void editMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
+void removeMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
+void toggleObserverStatus(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
 
 // Lab Menu Functions
 
 
 // Report Menu Functions
-void pullMemberReport(list<Member>& memberList, list<Observer>& observerList);
-void pullLabReport(list<Lab>& labList);
-void pullAllMembersReport(list<Member>& memberList, list<Observer>& observerList);
-void pullAllLabsReport(list<Lab>& labList);
+void pullMemberReport(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
+void pullLabReport(array<Lab*, LAB_ARR_SIZE>& labList);
+void pullAllMembersReport(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
+void pullAllLabsReport(array<Lab*, LAB_ARR_SIZE>& labList);
 
 // Processing Functions
 void clearBuffer(FILE* fp);
-void addMemberToLab(Member& member, Lab& lab);
-void assignObserverToLab(Observer& observer, Lab& lab);
+void shiftMemberListElements(array<Member*, MEMBER_ARR_SIZE>& memberList, const int& pos);
+void shiftObserverListElements(array<Observer*, LAB_ARR_SIZE>& observerList, const int& pos);
+void shiftLabListElements(array<Lab*, LAB_ARR_SIZE>& labList, const int& pos);
+void addMemberToLab(Member* member, Lab* lab);
+void assignObserverToLab(Observer* observer, Lab* lab);
 
 int main() {
-    list<Member> memberList;
-    list<Observer> observerList;
-    list<Lab> labList;
+    array<Member*, MEMBER_ARR_SIZE> memberList;
+    memberList.fill(nullptr);
+    array<Observer*, LAB_ARR_SIZE> observerList;
+    observerList.fill(nullptr);
+    array<Lab*, LAB_ARR_SIZE> labList;
+    labList.fill(nullptr);
     int userInput;
     bool validInput{ false };
 
@@ -132,99 +148,50 @@ This function initializes various objects to demo the program.
 
 TO DO: This function should be replaced with one that pulls data from all files to initialize the lists.
 */
-void initializeLists(list<Member>& memberList, list<Observer>& observerList, list<Lab>& labList) {
+void initializeLists(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList, array<Lab*, LAB_ARR_SIZE>& labList) {
 
     // Initialize Members
-    Member member1(11, "Phil Hartman", "Phartman@gmail.com", "123 Cropdust Ln", 3421243, 0.0);  
-    Member member2(12, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", 3450989, 10.0);
-    Member member3(13, "Micheal Jordan", "theRealGooooaaat@gmail.com", "345 Rand Ave", 3094953, 12.2);
-    Member member4(14, "Mary Prescott", "Mprescott@gmail.com", "325 S Sunset Ln", 5989765, 20.5);
-    Member member5(15, "Robert Jackson", "MrJackson11@yahoo.com", "435 S Cherrywood Ln", 3453245, 7);
-    Member member6(16, "Boyd Crowder", "crawDaddy@yahoo.com", "643 Grizzly Lane", 4503495, 19);
-
-    memberList.push_back(member1);
-    memberList.push_back(member2);
-    memberList.push_back(member3);
-    memberList.push_back(member4);
-    memberList.push_back(member5);
-    memberList.push_back(member6);
+    memberList[0] = new Member(11, "Phil Hartman", "Phartman@gmail.com", "123 Cropdust Ln", 3421243, 0.0);
+    memberListSize++;
+    memberList[1] = new Member(12, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", 3450989, 10.0);
+    memberListSize++;
+    memberList[2] = new Member(13, "Micheal Jordan", "theRealGooooaaat@gmail.com", "345 Rand Ave", 3094953, 12.2);
+    memberListSize++;
+    memberList[3] = new Member(14, "Mary Prescott", "Mprescott@gmail.com", "325 S Sunset Ln", 5989765, 20.5);
+    memberListSize++;
+    memberList[4] = new Member(15, "Robert Jackson", "MrJackson11@yahoo.com", "435 S Cherrywood Ln", 3453245, 7);
+    memberListSize++;
+    memberList[5] = new Member(16, "Boyd Crowder", "crawDaddy@yahoo.com", "643 Grizzly Lane", 4503495, 19);
+    memberListSize++;
 
     // Initialize Members
-    Observer observer1(17, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", 3450989, 0);
-    Observer observer2(18, "Robert Jackson", "MrJackson11@yahoo.com", "435 S Cherrywood Ln", 3453245, 5.0);
-    Observer observer3(19, "Boyd Crowder", "crawDaddy@yahoo.com", "643 Grizzly Lane", 4503495, 2.5);
-
-    observerList.push_back(observer1);
-    observerList.push_back(observer2);
-    observerList.push_back(observer3);
+    observerList[0] = new Observer(17, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", 3450989, 0);
+    observerListSize++;
+    observerList[1] = new Observer(18, "Robert Jackson", "MrJackson11@yahoo.com", "435 S Cherrywood Ln", 3453245, 5.0);
+    observerListSize++;
+    observerList[2] = new Observer(19, "Boyd Crowder", "crawDaddy@yahoo.com", "643 Grizzly Lane", 4503495, 2.5);
+    observerListSize++;
 
     // Initiailize Labs
-    Lab lab1(1, "Faceting", 50, nullptr); 
-    Lab lab2(2, "Lapidary", 75.2, nullptr);
-    Lab lab3(3, "Blacksmithing", 19.5, nullptr);
-
-    // Assign Observers to Labs
-    auto itr1 = observerList.begin();
-
-    // Observer1 -> Lab1
-    lab1.setObserver(&*itr1);
-
-    // Observer2 -> Lab2
-    itr1++;
-    lab2.setObserver(&*itr1);
-
-    // Observer3 -> Lab3
-    itr1++;
-    lab3.setObserver(&*itr1);
+    labList[0] = new Lab(1, "Faceting", 50, observerList[0]);
+    labListSize++;
+    labList[1] = new Lab(2, "Lapidary", 75.2, observerList[1]);
+    labListSize++;
+    labList[2] = new Lab(3, "Blacksmithing", 19.5, observerList[2]);
+    labListSize++;
 
     // Add Members to Labs
-    auto itr2 = memberList.begin();
-
-    // Member 1
-    addMemberToLab(*itr2, lab1);
-
-    // Member 2
-    itr2++;
-    addMemberToLab(*itr2, lab1);
-    addMemberToLab(*itr2, lab2);
-
-    // Member 3
-    itr2++;
-    addMemberToLab(*itr2, lab1);
-
-    // Member 5
-    itr2++;
-    itr2++;
-    addMemberToLab(*itr2, lab2);
-
-    // Member 6
-    itr2++;
-    addMemberToLab(*itr2, lab2);
-
-    labList.push_back(lab1);
-    labList.push_back(lab2);
-    labList.push_back(lab3);
+    addMemberToLab(memberList[0], labList[0]);
+    addMemberToLab(memberList[1], labList[0]);
+    addMemberToLab(memberList[1], labList[1]);
+    addMemberToLab(memberList[2], labList[0]);
+    addMemberToLab(memberList[4], labList[1]);
+    addMemberToLab(memberList[5], labList[1]);
 
     // Assign Labs to Observers
-    itr1 = observerList.begin();
-    auto itr3 = labList.begin();
-
-    // Lab1 -> Observer 1
-    assignObserverToLab(*itr1, *itr3);
-    itr1++;
-    addMemberToLab(*itr1, *itr3);
-    itr1--;
-    itr3++;
-    addMemberToLab(*itr1, *itr3);
-
-    // Lab2 -> Observer 2
-    itr1++;
-    assignObserverToLab(*itr1, *itr3);
-
-    // Lab3 -> Observer 3
-    itr1++;
-    itr3++;
-    assignObserverToLab(*itr1, *itr3);
+    assignObserverToLab(observerList[0], labList[0]);
+    assignObserverToLab(observerList[1], labList[1]);
+    assignObserverToLab(observerList[2], labList[2]);
 }
 
 /*
@@ -233,7 +200,7 @@ functions or return to the main menu.
 
 TO DO: Make sure to add function calls for helper functions after they're made.
 */
-void memberMenu(list<Member>& memberList, list<Observer>& observerList) {
+void memberMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
     int userInput;
     bool validInput{ false };
 
@@ -284,13 +251,13 @@ This helper function prints out every Member in the Member and Observer lists.
 Preconditions:  memberList and observerList have been initialized with Members
 Postconditions: all Members in memberList and observerList are printed to the console.
 */
-void printMembersList(list<Member>& memberList, list<Observer>& observerList) {
-    for (Observer observer : observerList) {
-        cout << observer.toString() << endl;
+void printMembersList(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
+    for (int i{ 0 }; i < observerListSize; i++) {
+        cout << observerList[i]->toString() << endl;
     }
 
-    for (Member member : memberList) {
-        cout << member.toString() << endl;
+    for (int i{ 0 }; i < memberListSize; i++) {
+        cout << memberList[i]->toString() << endl;
     }
 
     cout << endl;
@@ -301,7 +268,8 @@ This helper function adds a user input Member to memberList.
 
 TO DO: Add input verification and error handling.
 */
-void addMember(list<Member>& memberList) {
+void addMember(array<Member*, MEMBER_ARR_SIZE>& memberList) {
+    string userInput;
     int memberID;
     string name;
     string email;
@@ -309,29 +277,48 @@ void addMember(list<Member>& memberList) {
     int phoneNum;
     double labHours;
 
+    clearBuffer(stdin);
+
     cout << "Adding new Club Member..." << endl;
     cout << "Enter the Member's ID: ";
-    cin >> memberID;
+    getline(cin, userInput);
+    cout << endl;
+    memberID = stoi(userInput);
+
     cout << "Enter the Member's name: ";
-    cin >> name;
+    getline(cin, userInput);
+    cout << endl;
+    name = userInput;
+
     cout << "Enter the Member's email address: ";
-    cin >> email;
+    getline(cin, userInput);
+    cout << endl;
+    email = userInput;
+
     cout << "Enter the Member's street address: ";
-    cin >> address;
+    getline(cin, userInput);
+    cout << endl;
+    address = userInput;
+
     cout << "Enter the Member's phone number (without special characters or spaces): ";
-    cin >> phoneNum;
+    getline(cin, userInput);
+    cout << endl;
+    phoneNum = stoi(userInput);
+
     cout << "Enter the Member's available lab hours: ";
-    cin >> labHours;
+    getline(cin, userInput);
+    cout << endl;
+    labHours = stod(userInput);
 
     cout << endl;
 
-    memberList.push_back(Member(memberID, name, email, address, phoneNum, labHours));
+    memberList[memberListSize] = new Member(memberID, name, email, address, phoneNum, labHours);
+    memberListSize++;
 }
 
-void editMember(list<Member>& memberList, list<Observer>& observerList) {
+void editMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
     int memberID;
     Member* target{ nullptr };
-    bool foundTarget{ false };
     string userInput;
 
     cout << "Enter the Member's ID to pull their report: ";
@@ -339,27 +326,23 @@ void editMember(list<Member>& memberList, list<Observer>& observerList) {
 
     cout << endl;
 
-    for (auto itr{ memberList.begin() }; itr != memberList.end(); ++itr) {
-        target = &*itr;
-
-        if (target->getID() == memberID) {
-            foundTarget = true;
+    for (int i{ 0 }; i < memberListSize; i++) {
+        if (memberList[i]->getID() == memberID) {
+            target = memberList[i];
             break;
         }
     }
 
-    if (foundTarget == false) {
-        for (auto itr{ observerList.begin() }; itr != observerList.end(); ++itr) {
-            target = &*itr;
-
-            if (target->getID() == memberID) {
-                foundTarget = true;
+    if (target == nullptr) {
+        for (int i{ 0 }; i < observerListSize; i++) {
+            if (observerList[i]->getID() == memberID) {
+                target = observerList[i];
                 break;
             }
         }
     }
     
-    if (foundTarget == true) {
+    if (target != nullptr) {
         clearBuffer(stdin);
 
         cout << "For the following prompts, enter a new value if the data needs to be changed, otherwise hit ENTER to skip." << endl << endl;
@@ -411,7 +394,7 @@ void editMember(list<Member>& memberList, list<Observer>& observerList) {
     }
 }
 
-void removeMember(list<Member>& memberList, list<Observer>& observerList) {
+void removeMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
     int memberID;
 
     cout << "Enter the ID of the member to remove them or hit \"0\" to return: ";
@@ -423,19 +406,18 @@ void removeMember(list<Member>& memberList, list<Observer>& observerList) {
         return;
     }
     else {
-        for (Member member : memberList) {
-            if (member.getID() == memberID) {
-                memberList.remove(member);
+        for (int i{ 0 }; i < memberListSize; i++) {
+            if (memberList[i]->getID() == memberID) {
+                shiftMemberListElements(memberList, i);
                 cout << "Member " << memberID << " successfully removed from the database." << endl << endl;
                 return;
             }
         }
 
-        for (Observer observer : observerList) {
-            if (observer.getID() == memberID) {
-                Lab* labptr = observer.getAssignedLab();
-                observer.getAssignedLab()->setObserver(nullptr); // Detach observer from assigned Lab first.
-                observerList.remove(observer);
+        for (int i{ 0 }; i < memberListSize; i++) {
+            if (observerList[i]->getID() == memberID) {
+                observerList[i]->getAssignedLab()->setObserver(nullptr); // Detach observer from assigned Lab first.
+                shiftObserverListElements(observerList, i);
                 cout << "Member " << memberID << " successfully removed from the database." << endl << endl;
                 return;
             }
@@ -445,7 +427,7 @@ void removeMember(list<Member>& memberList, list<Observer>& observerList) {
     }
 }
 
-void toggleObserverStatus(list<Member>& memberList, list<Observer>& observerList) {
+void toggleObserverStatus(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
     int memberID;
 
     cout << "Entering the ID of a Member will promote them to Observer, if they are not already one. Otherwise, if " <<
@@ -454,29 +436,31 @@ void toggleObserverStatus(list<Member>& memberList, list<Observer>& observerList
     cout << "Enter a Member's ID to promote/demote them: ";
     cin >> memberID;
 
+    cout << endl;
+
     if (memberID == 0) {
         return;
     }
     else {
-        for (Member member : memberList) {
-            if (member.getID() == memberID) {
-                Observer observer(member);
-                observerList.push_back(observer);
+        for (int i{ 0 }; i < memberListSize; i++) {
+            if (memberList[i]->getID() == memberID) {
+                observerList[observerListSize] = new Observer(*memberList[i]);
+                observerListSize++;
 
-                memberList.remove(member);
+                shiftMemberListElements(memberList, i);
 
                 cout << "Member " << memberID << " successfully promoted to Observer." << endl << endl;
                 return;
             }
         }
 
-        for (Observer observer : observerList) {
-            if (observer.getID() == memberID) {
-                Member member(observer);
-                memberList.push_back(member);
+        for (int i{ 0 }; i < observerListSize; i++) {
+            if (observerList[i]->getID() == memberID) {
+                memberList[memberListSize] = new Member(*observerList[i]);
+                memberListSize++;
 
-                observer.getAssignedLab()->setObserver(nullptr);
-                observerList.remove(observer);
+                observerList[i]->getAssignedLab()->setObserver(nullptr);
+                shiftObserverListElements(observerList, i);
 
                 cout << "Member " << memberID << " successfully demoted toMember." << endl << endl;
                 return;
@@ -493,7 +477,7 @@ functions or return to the main menu.
 
 TO DO: Make sure to add function calls for helper functions after they're made.
 */
-void labMenu(list<Member>& memberList, list<Observer>& observerList, list<Lab>& labList) {
+void labMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList, array<Lab*, LAB_ARR_SIZE>& labList) {
     int userInput;
     bool validInput{ false };
 
@@ -545,7 +529,7 @@ helper functions or return to the main menu.
 
 TO DO: This function and its helper functions will likely need to be changed if a Report class is added to the program
 */
-void reportMenu(list<Member>& memberList, list<Observer>& observerList, list<Lab>& labList) {
+void reportMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList, array<Lab*, LAB_ARR_SIZE>& labList) {
     int userInput;
     bool validInput{ false };
 
@@ -592,7 +576,7 @@ This helper function takes a user input Member ID and uses it to print the Membe
 
 TO DO: Add input verification and error handling.
 */
-void pullMemberReport(list<Member>& memberList, list<Observer>& observerList) {
+void pullMemberReport(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
     int memberID;
 
     cout << "Enter the Member's ID to pull their report: ";
@@ -600,18 +584,18 @@ void pullMemberReport(list<Member>& memberList, list<Observer>& observerList) {
 
     cout << endl;
 
-    for (auto itr{ memberList.begin() }; itr != memberList.end(); ++itr) {
-        if ((*itr).getID() == memberID) {
+    for (int i{ 0 }; i < memberListSize; i++) {
+        if (memberList[i]->getID() == memberID) {
             cout << "Member Report" << endl;
-            (*itr).pullReport();
+            memberList[i]->pullReport();
             return;
         }
     }
 
-    for (auto itr{ observerList.begin() }; itr != observerList.end(); ++itr) {
-        if ((*itr).getID() == memberID) {
+    for (int i{ 0 }; i < observerListSize; i++) {
+        if (observerList[i]->getID() == memberID) {
             cout << "Member Report" << endl;
-            (*itr).pullReport();
+            observerList[i]->pullReport();
             return;
         }
     }
@@ -624,7 +608,7 @@ This helper function takes a user input Lab ID and uses it to print the Lab's Re
 
 TO DO: Add input verification and error handling.
 */
-void pullLabReport(list<Lab>& labList) {
+void pullLabReport(array<Lab*, LAB_ARR_SIZE>& labList) {
     Lab target;
     int labID;
     bool validInput{ false };
@@ -634,21 +618,15 @@ void pullLabReport(list<Lab>& labList) {
 
     cout << endl;
 
-    for (Lab lab : labList) {
-        if (lab.getID() == labID) {
-            target = lab;
-            validInput = true;
-            break;
+    for (int i{ 0 }; i < labListSize; i++) {
+        if (labList[i]->getID() == labID) {
+            cout << "Lab Report" << endl;
+            labList[i]->pullReport();
+            return;
         }
     }
 
-    if (validInput == true) {
-        cout << "Lab Report" << endl;
-        target.pullReport();
-    }
-    else {
-        cout << "That Lab ID doesn't exist. Returning to previous menu..." << endl << endl;
-    }
+    cout << "That Lab ID doesn't exist. Returning to previous menu..." << endl << endl;
 }
 
 /*
@@ -656,18 +634,18 @@ This helper function prints out ever Member report from memberList and observerL
 Preconditions:  memberList and observerList have been initialized with Members
 Postconditions: the Reports of all Members in memberList and observerList are printed to the console.
 */
-void pullAllMembersReport(list<Member>& memberList, list<Observer>& observerList) {
+void pullAllMembersReport(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
     int count{ 1 };
 
-    for (Member member : memberList) {
+    for (int i{ 0 }; i < memberListSize; i++) {
         cout << "Member " << count << " Report:" << endl;
-        member.pullReport();
+        memberList[i]->pullReport();
         count++;
     }
 
-    for (Observer observer : observerList) {
+    for (int i{ 0 }; i < observerListSize; i++) {
         cout << "Member " << count << " Report:" << endl;
-        observer.pullReport();
+        observerList[i]->pullReport();
         count++;
     }
 }
@@ -677,11 +655,11 @@ This helper function prints out ever Lab report from labList.
 Preconditions:  labList has been initialized with Labs
 Postconditions: the Reports of all Labs in labList are printed to the console.
 */
-void pullAllLabsReport(list<Lab>& labList) {
+void pullAllLabsReport(array<Lab*, LAB_ARR_SIZE>& labList) {
     cout << "Lab Reports:" << endl;
 
-    for (Lab lab : labList) {
-        lab.pullReport();
+    for (int i{ 0 }; i < labListSize; i++) {
+        labList[i]->pullReport();
     }
 }
 
@@ -695,17 +673,77 @@ void clearBuffer(FILE* fp) {
     while ((ch = getc(fp)) != '\n' && ch != EOF);
 }
 
+void shiftMemberListElements(array<Member*, MEMBER_ARR_SIZE>& memberList, const int& pos) {
+    int listSize = memberListSize;
+
+    if (pos == memberList.max_size() - 1) { // If pos is the last element in labsList
+        memberList[pos] = nullptr;
+    }
+    else if (listSize == 1) { // If pos is the only element in the list
+        memberList[pos] = nullptr;
+    }
+    else {
+        for (int i{ pos }; i < listSize - 1; i++) {
+            memberList[i] = memberList[i + 1];
+        }
+
+        memberList[listSize - 1] = nullptr;
+    }
+
+    memberListSize--;
+}
+
+void shiftObserverListElements(array<Observer*, LAB_ARR_SIZE>& observerList, const int& pos) {
+    int listSize = observerListSize;
+
+    if (pos == observerList.max_size() - 1) { // If pos is the last element in labsList
+        observerList[pos] = nullptr;
+    }
+    else if (listSize == 1) { // If pos is the only element in the list
+        observerList[pos] = nullptr;
+    }
+    else {
+        for (int i{ pos }; i < listSize - 1; i++) {
+            observerList[i] = observerList[i + 1];
+        }
+
+        observerList[listSize - 1] = nullptr;
+    }
+
+    observerListSize--;
+}
+
+void shiftLabListElements(array<Lab*, LAB_ARR_SIZE>& labList, const int& pos) {
+    int listSize = labListSize;
+
+    if (pos == labList.max_size() - 1) { // If pos is the last element in labsList
+        labList[pos] = nullptr;
+    }
+    else if (listSize == 1) { // If pos is the only element in the list
+        labList[pos] = nullptr;
+    }
+    else {
+        for (int i{ pos }; i < listSize - 1; i++) {
+            labList[i] = labList[i + 1];
+        }
+
+        labList[listSize - 1] = nullptr;
+    }
+
+    labListSize--;
+}
+
 /*
 This function takes the member and lab parameter and adds them to each others' respective lists.
 Preconditions:  none
 Postconditions: member has been added to lab's memberList and lab has been added to member's labsList
 */
-void addMemberToLab(Member& member, Lab& lab) {
-    member.addLab(&lab);
-    lab.addMember(&member);
+void addMemberToLab(Member* member, Lab* lab) {
+    member->addLab(lab);
+    lab->addMember(member);
 }
 
-void assignObserverToLab(Observer& observer, Lab& lab) {
-    observer.setAssignedLab(&lab);
-    lab.setObserver(&observer);
+void assignObserverToLab(Observer* observer, Lab* lab) {
+    observer->setAssignedLab(lab);
+    lab->setObserver(observer);
 }
