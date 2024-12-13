@@ -237,19 +237,19 @@ void memberMenu(list<Member>& memberList, list<Observer>& observerList) {
 
         switch (userInput) {
         case 1:
-            printMembersList(memberList, observerList, labList);
+            printMembersList(memberList, observerList);
             break;
         case 2:
             addMember(memberList);
             break;
         case 3:
-            editMember(memberList)
+            editMember(memberList, observerList);
             break;
         case 4:
-            removeMember(memberList)
+            removeMember(memberList, observerList);
             break;
         case 5:
-            toggleObserverStatus(memberList, observerList, labList)
+            toggleObserverStatus(memberList, observerList);
             break;
         case 6:
             validInput = true;
