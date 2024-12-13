@@ -241,13 +241,13 @@ void memberMenu(list<Member>& memberList, list<Observer>& observerList) {
             addMember(memberList);
             break;
         case 3:
-            editMember()
+            editMember(memberList)
             break;
         case 4:
-
+            removeMember(memberList)
             break;
         case 5:
-
+            
             break;
         case 6:
             validInput = true;
