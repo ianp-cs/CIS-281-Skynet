@@ -143,7 +143,11 @@ void initializeLists(list<Member>& memberList, list<Observer>& observerList, lis
             int id, phoneNum;
             string name, email, address;
             double labHours;
-            ss >> id >> name >> address >> phoneNum >> labHours;
+            ss >> id;
+            getline(ss, name, ' ');
+            ss >> email; 
+            getline(ss, address);
+            ss >> phoneNum >> labHours;
             memberList.push_back(id, name, email, address, phoneNum, labHours);
         }
         memberFile.close();
@@ -174,8 +178,11 @@ void initializeLists(list<Member>& memberList, list<Observer>& observerList, lis
             int id, phoneNum;
             string name, email, address;
             doublelabHours;
-
-            ss >> id >> name >> address >> phoneNum >> labHours;
+            ss >> id;
+            getline(ss, name, ' ');
+            ss >> email; 
+            getline(ss, address);
+            ss >> phoneNum >> labHours;
             observerList.push_back(id, name, email, address, phoneNum, labHours); }
         observerFile.close(); 
     }    else {
