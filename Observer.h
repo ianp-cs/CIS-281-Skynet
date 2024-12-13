@@ -33,6 +33,9 @@ public:
 	Observer(const int& accountID, const string& name, const string& email, const string& address, const int& phoneNum, 
 		const double& labHours);
 
+	// Constructor with Member
+	Observer(const Member& member);
+
 	// Copy Constructor
 	Observer(const Observer& observer);
 

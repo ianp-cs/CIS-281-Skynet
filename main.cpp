@@ -25,15 +25,18 @@ using namespace std;
 // Startup
 void userLogin();
 void initializeLists(list<Member>& memberList, list<Observer>& observerList, list<Lab>& labList);
-void memberMenu(list<Member>& memberList, list<Observer>& observerList);
 
 // Main Menu Functions
+void memberMenu(list<Member>& memberList, list<Observer>& observerList);
 void labMenu(list<Member>& memberList, list<Observer>& observerList, list<Lab>& labList);
 void reportMenu(list<Member>& memberList, list<Observer>& observerList, list<Lab>& labList);
 
 // Member Menu Functions
 void printMembersList(list<Member>& memberList, list<Observer>& observerList);
 void addMember(list<Member>& memberList);
+void editMember(list<Member>& memberList, list<Observer>& observerList);
+void removeMember(list<Member>& memberList, list<Observer>& observerList);
+void toggleObserverStatus(list<Member>& memberList, list<Observer>& observerList);
 
 // Lab Menu Functions
 
@@ -45,6 +48,7 @@ void pullAllMembersReport(list<Member>& memberList, list<Observer>& observerList
 void pullAllLabsReport(list<Lab>& labList);
 
 // Processing Functions
+void clearBuffer(FILE* fp);
 void addMemberToLab(Member& member, Lab& lab);
 void assignObserverToLab(Observer& observer, Lab& lab);
 
@@ -83,11 +87,11 @@ int main() {
             break;
         case 4:
             validInput = true;
-            cout << "Closing the program..." << endl << endl;
+            cout << "Closing the program..." << endl;
             break;
         default:
             validInput = false;
-            cout << "Invalid input. Please try again." << endl << endl;
+            cout << "Invalid input. Please try again." << endl;
         }
     }
 }
@@ -99,7 +103,7 @@ otherwise they are prompted to try again.
 TO DO: Administrator information should be pulled from an encrypted file, it should not be hard-coded.
 */
 void userLogin() {
-    Administrator admin(1, "Bill", "BillyBob123", "BabyBilly@gmail.com"); //create an admin
+    Administrator admin(1, "a", "a", "BabyBilly@gmail.com"); //create an admin
     bool loginSuccess{ false };
 
     while (loginSuccess == false) {
@@ -207,6 +211,9 @@ void initializeLists(list<Member>& memberList, list<Observer>& observerList, lis
 
     // Lab1 -> Observer 1
     assignObserverToLab(*itr1, *itr3);
+    itr1++;
+    addMemberToLab(*itr1, *itr3);
+    itr1--;
     itr3++;
     addMemberToLab(*itr1, *itr3);
 
@@ -253,13 +260,13 @@ void memberMenu(list<Member>& memberList, list<Observer>& observerList) {
             addMember(memberList);
             break;
         case 3:
-
+            editMember(memberList, observerList);
             break;
         case 4:
-
+            removeMember(memberList, observerList);
             break;
         case 5:
-
+            toggleObserverStatus(memberList, observerList);
             break;
         case 6:
             validInput = true;
@@ -316,8 +323,168 @@ void addMember(list<Member>& memberList) {
     cout << "Enter the Member's available lab hours: ";
     cin >> labHours;
 
-    Member member(memberID, name, email, address, phoneNum, labHours);
-    memberList.push_back(member);
+    cout << endl;
+
+    memberList.push_back(Member(memberID, name, email, address, phoneNum, labHours));
+}
+
+void editMember(list<Member>& memberList, list<Observer>& observerList) {
+    int memberID;
+    Member* target{ nullptr };
+    bool foundTarget{ false };
+    string userInput;
+
+    cout << "Enter the Member's ID to pull their report: ";
+    cin >> memberID;
+
+    cout << endl;
+
+    for (auto itr{ memberList.begin() }; itr != memberList.end(); ++itr) {
+        target = &*itr;
+
+        if (target->getID() == memberID) {
+            foundTarget = true;
+            break;
+        }
+    }
+
+    if (foundTarget == false) {
+        for (auto itr{ observerList.begin() }; itr != observerList.end(); ++itr) {
+            target = &*itr;
+
+            if (target->getID() == memberID) {
+                foundTarget = true;
+                break;
+            }
+        }
+    }
+    
+    if (foundTarget == true) {
+        clearBuffer(stdin);
+
+        cout << "For the following prompts, enter a new value if the data needs to be changed, otherwise hit ENTER to skip." << endl << endl;
+
+        cout << "Enter the Member's ID: ";
+        getline(cin, userInput);
+        cout << endl;
+        if (userInput != "") {
+            target->setID(stoi(userInput));
+        }
+
+        cout << "Enter the Member's name: ";
+        getline(cin, userInput);
+        cout << endl;
+        if (userInput != "") {
+            target->setName(userInput);
+        }
+
+        cout << "Enter the Member's email address: ";
+        getline(cin, userInput);
+        cout << endl;
+        if (userInput != "") {
+            target->setEmail(userInput);
+        }
+
+        cout << "Enter the Member's street address: ";
+        getline(cin, userInput);
+        cout << endl;
+        if (userInput != "") {
+            target->setAddress(userInput);
+        }
+
+        cout << "Enter the Member's phone number (without special characters or spaces): ";
+        getline(cin, userInput);
+        cout << endl;
+        if (userInput != "") {
+            target->setPhoneNum(stoi(userInput));
+        }
+
+        cout << "Enter the Member's available lab hours: ";
+        getline(cin, userInput);
+        cout << endl;
+        if (userInput != "") {
+            target->setLabHours(stod(userInput));
+        }
+    }
+    else {
+        cout << "There is no Member with ID \"" << memberID << "\". Returning to previous menu..." << endl << endl;
+    }
+}
+
+void removeMember(list<Member>& memberList, list<Observer>& observerList) {
+    int memberID;
+
+    cout << "Enter the ID of the member to remove them or hit \"0\" to return: ";
+    cin >> memberID;
+
+    cout << endl;
+
+    if (memberID == 0) {
+        return;
+    }
+    else {
+        for (Member member : memberList) {
+            if (member.getID() == memberID) {
+                memberList.remove(member);
+                cout << "Member " << memberID << " successfully removed from the database." << endl << endl;
+                return;
+            }
+        }
+
+        for (Observer observer : observerList) {
+            if (observer.getID() == memberID) {
+                Lab* labptr = observer.getAssignedLab();
+                observer.getAssignedLab()->setObserver(nullptr); // Detach observer from assigned Lab first.
+                observerList.remove(observer);
+                cout << "Member " << memberID << " successfully removed from the database." << endl << endl;
+                return;
+            }
+        }
+
+        cout << "There is no Member with ID \"" << memberID << "\". Returning to previous menu..." << endl << endl;
+    }
+}
+
+void toggleObserverStatus(list<Member>& memberList, list<Observer>& observerList) {
+    int memberID;
+
+    cout << "Entering the ID of a Member will promote them to Observer, if they are not already one. Otherwise, if " <<
+        "the ID is of an Observer, they will be demoted to Member. Enter \"0\" to return to the previous menu." << endl << endl;
+
+    cout << "Enter a Member's ID to promote/demote them: ";
+    cin >> memberID;
+
+    if (memberID == 0) {
+        return;
+    }
+    else {
+        for (Member member : memberList) {
+            if (member.getID() == memberID) {
+                Observer observer(member);
+                observerList.push_back(observer);
+
+                memberList.remove(member);
+
+                cout << "Member " << memberID << " successfully promoted to Observer." << endl << endl;
+                return;
+            }
+        }
+
+        for (Observer observer : observerList) {
+            if (observer.getID() == memberID) {
+                Member member(observer);
+                memberList.push_back(member);
+
+                observer.getAssignedLab()->setObserver(nullptr);
+                observerList.remove(observer);
+
+                cout << "Member " << memberID << " successfully demoted toMember." << endl << endl;
+                return;
+            }
+        }
+
+        cout << "There is no Member with ID \"" << memberID << "\". Returning to previous menu..." << endl << endl;
+    }
 }
 
 /*
@@ -516,6 +683,16 @@ void pullAllLabsReport(list<Lab>& labList) {
     for (Lab lab : labList) {
         lab.pullReport();
     }
+}
+
+/*
+This function clears the input buffer of the stream parameter.
+Input: FILE pointer fp
+Output: none
+*/
+void clearBuffer(FILE* fp) {
+    char ch;
+    while ((ch = getc(fp)) != '\n' && ch != EOF);
 }
 
 /*

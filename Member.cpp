@@ -39,6 +39,10 @@ double Member::getLabHours() const {
 	return this->labHours;
 }
 
+void Member::setLabHours(const double& labHours) {
+	this->labHours = labHours;
+}
+
 void Member::addLab(Lab* lab) {
 	if (this->listSize == MAX_LABS) {
 		cout << "Failed to add lab. This Member's Labs list is full." << endl << endl;
@@ -105,8 +109,14 @@ void Member::pullReport() const {
 		cout << "--------------------------------------------" << endl;
 		for (int i{ 0 }; i < this->listSize; i++) {
 			Lab* lab = this->labsList[i];
-			cout << left << setw(11) << to_string(lab->getID()) << setw(18) << lab->getType() <<
-				lab->getObserver()->getName() << endl;
+			if (lab->getObserver() != nullptr) {
+				cout << left << setw(11) << to_string(lab->getID()) << setw(18) << lab->getType() <<
+					lab->getObserver()->getName() << endl;
+			}
+			else {
+				cout << left << setw(11) << to_string(lab->getID()) << setw(18) << lab->getType() <<
+					"None Assigned" << endl;
+			}
 		}
 	}
 	else {

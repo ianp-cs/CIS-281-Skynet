@@ -50,6 +50,9 @@ public:
 	// Returns the labHours data member
 	double getLabHours() const;
 
+	// Sets the labHours data member
+	void setLabHours(const double& labHours);
+
 /* OTHER METHODS */
 
 	/*

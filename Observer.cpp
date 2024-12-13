@@ -11,6 +11,22 @@ Observer::Observer(const int& accountID, const string& name, const string& email
 	this->setAssignedLab(nullptr);
 }
 
+Observer::Observer(const Member& member) {
+	this->setID(member.getID());
+	this->setName(member.getName());
+	this->setEmail(member.getEmail());
+	this->setAddress(member.getAddress());
+	this->setPhoneNum(member.getPhoneNum());
+	this->labHours = member.getLabHours();
+	this->setAssignedLab(nullptr);
+
+	int listLength{sizeof(*member.getLabsList()) / sizeof(member.getLabsList()[0])};
+
+	for (int i{ 0 }; i < listLength; i++) {
+		this->addLab(&member.getLabsList()[i]);
+	}
+}
+
 Observer::Observer(const Observer& observer) {
 	this->setID(observer.getID());
 	this->setName(observer.getName());
