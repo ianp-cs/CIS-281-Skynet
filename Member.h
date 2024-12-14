@@ -39,13 +39,13 @@ public:
 	// Copy Constructor
 	Member(const Member& member);
 
-	// Destructor
-	~Member();
-
 /* GETTERS + SETTERS */
 
 	// Returns the labList data member
-	Lab* getLabsList() const;
+	Lab** getLabsList();
+
+	// Returns the listSize data member
+	int getLabsListSize() const;
 
 	// Returns the labHours data member
 	double getLabHours() const;
@@ -68,6 +68,13 @@ public:
 	Postcondition:	The Lab is no longer in the Member's labList.
 	*/
 	void removeLab(Lab* lab);
+
+	/*
+	This method returns true if the lab parameter is in this Member's labList.
+	Precondition:	none
+	Postcondition:	Returns true if the lab parameter is in this Member's labList.
+	*/
+	bool hasLab(Lab* lab);
 
 	/*
 	This method reduces the input amount of hours from this Member's labHours, so long as it doesn't bring their 

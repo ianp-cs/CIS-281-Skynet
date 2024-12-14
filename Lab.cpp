@@ -27,12 +27,6 @@ Lab::Lab(const Lab& lab) {
 	}
 }
 
-Lab::~Lab() {
-	for (int i{ 0 }; i < this->listSize; i++) {
-		delete this->memberList[i];
-	}
-}
-
 int Lab::getID() const {
 	return this->labID;
 }
@@ -51,6 +45,10 @@ void Lab::setType(const string& type) {
 
 double Lab::getTotalHours() const {
 	return this->totalHours;
+}
+
+void Lab::setTotalHours(const double& totalHours) {
+	this->totalHours = totalHours;
 }
 
 Observer* Lab::getObserver() const {
@@ -90,8 +88,7 @@ void Lab::addMember(Member* member) {
 		}
 	}
 
-	Member* newMember = new Member(*member);
-	this->memberList[listSize] = newMember;
+	this->memberList[listSize] = member;
 	this->listSize++;
 }
 

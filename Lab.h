@@ -38,9 +38,6 @@ public:
 	// Copy Constructor
 	Lab(const Lab& lab);
 
-	// Destructor
-	~Lab();
-
 /* GETTERS + SETTERS */
 	
 	// Returns the labID data member
@@ -57,6 +54,9 @@ public:
 
 	// Returns the totalHours data member
 	double getTotalHours() const;
+
+	// Sets the totalHours data member
+	void setTotalHours(const double& totalHours);
 
 	// Returns the Observer data member
 	Observer* getObserver() const;

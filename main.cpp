@@ -35,7 +35,8 @@ void initializeLists(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer
     array<Lab*, LAB_ARR_SIZE>& labList);
 
 // Main Menu Functions
-void memberMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
+void memberMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList,
+    array<Lab*, LAB_ARR_SIZE>& labList);
 void labMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList, 
     array<Lab*, LAB_ARR_SIZE>& labList);
 void reportMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList, 
@@ -47,9 +48,21 @@ void addMember(array<Member*, MEMBER_ARR_SIZE>& memberList);
 void editMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
 void removeMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
 void toggleObserverStatus(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
+void addMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
+void spendMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
+void refundMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
 
 // Lab Menu Functions
-
+void printLabList(array<Lab*, LAB_ARR_SIZE>& labList);
+void addLab(array<Lab*, LAB_ARR_SIZE>& labList);
+void editLab(array<Lab*, LAB_ARR_SIZE>& labList);
+void removeLab(array<Lab*, LAB_ARR_SIZE>& labList);
+void assignObserverToLab(array<Observer*, LAB_ARR_SIZE>& observerList, array<Lab*, LAB_ARR_SIZE>& labList);
+void unassignObserver(array<Observer*, LAB_ARR_SIZE>& observerList);
+void assignMemberToLab(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList,
+    array<Lab*, LAB_ARR_SIZE>& labList);
+void unassignMemberFromLab(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList,
+    array<Lab*, LAB_ARR_SIZE>& labList);
 
 // Report Menu Functions
 void pullMemberReport(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
@@ -62,8 +75,12 @@ void clearBuffer(FILE* fp);
 void shiftMemberListElements(array<Member*, MEMBER_ARR_SIZE>& memberList, const int& pos);
 void shiftObserverListElements(array<Observer*, LAB_ARR_SIZE>& observerList, const int& pos);
 void shiftLabListElements(array<Lab*, LAB_ARR_SIZE>& labList, const int& pos);
-void addMemberToLab(Member* member, Lab* lab);
-void assignObserverToLab(Observer* observer, Lab* lab);
+void attachMemberToLab(Member* member, Lab* lab);
+void detachMemberFromLab(Member* member, Lab* lab);
+void detachMember(Member* member);
+void attachObserverToLab(Observer* observer, Lab* lab);
+void deallocateLists(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList,
+    array<Lab*, LAB_ARR_SIZE>& labList);
 
 int main() {
     array<Member*, MEMBER_ARR_SIZE> memberList;
@@ -72,6 +89,7 @@ int main() {
     observerList.fill(nullptr);
     array<Lab*, LAB_ARR_SIZE> labList;
     labList.fill(nullptr);
+
     int userInput;
     bool validInput{ false };
 
@@ -93,7 +111,7 @@ int main() {
 
         switch (userInput) {
         case 1:
-            memberMenu(memberList, observerList);
+            memberMenu(memberList, observerList, labList);
             break;
         case 2:
             labMenu(memberList, observerList, labList);
@@ -104,6 +122,7 @@ int main() {
         case 4:
             validInput = true;
             cout << "Closing the program..." << endl;
+            deallocateLists(memberList, observerList, labList);
             break;
         default:
             validInput = false;
@@ -148,7 +167,8 @@ This function initializes various objects to demo the program.
 
 TO DO: This function should be replaced with one that pulls data from all files to initialize the lists.
 */
-void initializeLists(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList, array<Lab*, LAB_ARR_SIZE>& labList) {
+void initializeLists(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList, 
+    array<Lab*, LAB_ARR_SIZE>& labList) {
 
     // Initialize Members
     memberList[0] = new Member(11, "Phil Hartman", "Phartman@gmail.com", "123 Cropdust Ln", 3421243, 0.0);
@@ -165,11 +185,11 @@ void initializeLists(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer
     memberListSize++;
 
     // Initialize Members
-    observerList[0] = new Observer(17, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", 3450989, 0);
+    observerList[0] = new Observer(17, "Bob Sagot", "bsagot@aol.com", "123 N Main St", 1234567, 0);
     observerListSize++;
-    observerList[1] = new Observer(18, "Robert Jackson", "MrJackson11@yahoo.com", "435 S Cherrywood Ln", 3453245, 5.0);
+    observerList[1] = new Observer(18, "John Doe", "jdoe@yahoo.com", "987 N Uptown St", 1231234, 5.0);
     observerListSize++;
-    observerList[2] = new Observer(19, "Boyd Crowder", "crawDaddy@yahoo.com", "643 Grizzly Lane", 4503495, 2.5);
+    observerList[2] = new Observer(19, "Hally Berry", "hberry@yahoo.com", "456 W Songify Rd", 8675309, 2.5);
     observerListSize++;
 
     // Initiailize Labs
@@ -181,17 +201,17 @@ void initializeLists(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer
     labListSize++;
 
     // Add Members to Labs
-    addMemberToLab(memberList[0], labList[0]);
-    addMemberToLab(memberList[1], labList[0]);
-    addMemberToLab(memberList[1], labList[1]);
-    addMemberToLab(memberList[2], labList[0]);
-    addMemberToLab(memberList[4], labList[1]);
-    addMemberToLab(memberList[5], labList[1]);
+    attachMemberToLab(memberList[0], labList[0]);
+    attachMemberToLab(memberList[1], labList[0]);
+    attachMemberToLab(memberList[1], labList[1]);
+    attachMemberToLab(memberList[2], labList[0]);
+    attachMemberToLab(memberList[4], labList[1]);
+    attachMemberToLab(memberList[5], labList[1]);
 
     // Assign Labs to Observers
-    assignObserverToLab(observerList[0], labList[0]);
-    assignObserverToLab(observerList[1], labList[1]);
-    assignObserverToLab(observerList[2], labList[2]);
+    attachObserverToLab(observerList[0], labList[0]);
+    attachObserverToLab(observerList[1], labList[1]);
+    attachObserverToLab(observerList[2], labList[2]);
 }
 
 /*
@@ -200,7 +220,9 @@ functions or return to the main menu.
 
 TO DO: Make sure to add function calls for helper functions after they're made.
 */
-void memberMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
+void memberMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList,
+    array<Lab*, LAB_ARR_SIZE>& labList) {
+
     int userInput;
     bool validInput{ false };
 
@@ -212,7 +234,10 @@ void memberMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LA
         cout << "3) Edit a Member" << endl;
         cout << "4) Remove a Member" << endl;
         cout << "5) Promote/Demote to Observer" << endl;
-        cout << "6) Return to Main Menu" << endl << endl;
+        cout << "6) Add Lab Hours to Member" << endl;
+        cout << "7) Spend Member's Lab Hours" << endl;
+        cout << "8) Refund Member's lab Hours" << endl;
+        cout << "9) Return to Main Menu" << endl << endl;
 
         cout << "Enter a menu option: ";
         cin >> userInput;
@@ -236,6 +261,15 @@ void memberMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LA
             toggleObserverStatus(memberList, observerList);
             break;
         case 6:
+            addMemberLabHours(memberList, observerList);
+            break;
+        case 7:
+            spendMemberLabHours(memberList, observerList);
+            break;
+        case 8:
+            refundMemberLabHours(memberList, observerList);
+            break;
+        case 9:
             validInput = true;
             cout << "Returning to main menu..." << endl << endl;
             break;
@@ -280,9 +314,13 @@ void addMember(array<Member*, MEMBER_ARR_SIZE>& memberList) {
     clearBuffer(stdin);
 
     cout << "Adding new Club Member..." << endl;
-    cout << "Enter the Member's ID: ";
+    cout << "Enter the Member's ID or enter \"0\" to return: ";
     getline(cin, userInput);
     cout << endl;
+    if (stoi(userInput) == 0) {
+        cout << endl;
+        return;
+    }
     memberID = stoi(userInput);
 
     cout << "Enter the Member's name: ";
@@ -321,10 +359,14 @@ void editMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LA
     Member* target{ nullptr };
     string userInput;
 
-    cout << "Enter the Member's ID to pull their report: ";
+    cout << "Enter the Member's ID to edit or enter \"0\" to return: ";
     cin >> memberID;
 
     cout << endl;
+
+    if (memberID == 0) {
+        return;
+    }
 
     for (int i{ 0 }; i < memberListSize; i++) {
         if (memberList[i]->getID() == memberID) {
@@ -397,7 +439,7 @@ void editMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LA
 void removeMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
     int memberID;
 
-    cout << "Enter the ID of the member to remove them or hit \"0\" to return: ";
+    cout << "Enter the ID of the Member to remove them or enter \"0\" to return: ";
     cin >> memberID;
 
     cout << endl;
@@ -408,6 +450,7 @@ void removeMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, 
     else {
         for (int i{ 0 }; i < memberListSize; i++) {
             if (memberList[i]->getID() == memberID) {
+                detachMember(memberList[i]);
                 shiftMemberListElements(memberList, i);
                 cout << "Member " << memberID << " successfully removed from the database." << endl << endl;
                 return;
@@ -417,6 +460,7 @@ void removeMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, 
         for (int i{ 0 }; i < memberListSize; i++) {
             if (observerList[i]->getID() == memberID) {
                 observerList[i]->getAssignedLab()->setObserver(nullptr); // Detach observer from assigned Lab first.
+                detachMember(observerList[i]);
                 shiftObserverListElements(observerList, i);
                 cout << "Member " << memberID << " successfully removed from the database." << endl << endl;
                 return;
@@ -471,6 +515,180 @@ void toggleObserverStatus(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Obs
     }
 }
 
+void addMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
+    int memberID;
+    Member* target{ nullptr };
+    double labHours;
+
+    cout << "Enter a Member's ID to add Lab hours or enter \"0\" to return: ";
+    cin >> memberID;
+
+    cout << endl;
+
+    if (memberID == 0) {
+        return;
+    }
+
+    for (int i{ 0 }; i < memberListSize; i++) {
+        if (memberList[i]->getID() == memberID) {
+            target = memberList[i];
+            break;
+        }
+    }
+
+    if (target == nullptr) {
+        for (int i{ 0 }; i < observerListSize; i++) {
+            if (observerList[i]->getID() == memberID) {
+                target = observerList[i];
+                break;
+            }
+        }
+    }
+
+    if (target != nullptr) {
+        cout << "Enter the number of hours to add to Member " << memberID << " total Lab hours: ";
+        cin >> labHours;
+
+        cout << endl;
+
+        target->refundLabHours(labHours);
+        cout << fixed << setprecision(2);
+        cout << "Successfully added " << labHours << " hours to Member " << memberID << "\'s balance." << endl << endl;
+    }
+
+    cout << "There is no Member with ID \"" << memberID << "\". Returning to previous menu..." << endl << endl;
+}
+
+void spendMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
+    int memberID, labID;
+    Member* memberTarget{ nullptr };
+    Lab* labTarget{ nullptr };
+    string userInput;
+    double labHours;
+
+    cout << "Enter a Member's ID to spend Lab hours or enter \"0\" to return: ";
+    cin >> memberID;
+
+    cout << endl;
+
+    if (memberID == 0) {
+        return;
+    }
+
+    for (int i{ 0 }; i < memberListSize; i++) {
+        if (memberList[i]->getID() == memberID) {
+            memberTarget = memberList[i];
+            break;
+        }
+    }
+
+    if (memberTarget == nullptr) {
+        for (int i{ 0 }; i < observerListSize; i++) {
+            if (observerList[i]->getID() == memberID) {
+                memberTarget = observerList[i];
+                break;
+            }
+        }
+    }
+
+    if (memberTarget == nullptr) {
+        cout << "There is no Member with ID \"" << memberID << "\". Returning to previous menu..." << endl << endl;
+        return;
+    }
+
+    cout << "Enter the ID of the Lab where the Lab hours are spent: ";
+    cin >> labID;
+
+    cout << endl;
+
+    for (int i{ 0 }; i < memberTarget->getLabsListSize(); i++) {
+        if (memberTarget->getLabsList()[i]->getID() == labID) {
+            labTarget = memberTarget->getLabsList()[i];
+        }
+    }
+
+    if (labTarget == nullptr) {
+        cout << "Member " << memberID << " does not have Lab " << labID << " in their Lab list. Returning to previous " 
+            "menu..." << endl << endl;
+        return;
+    }
+
+    cout << "Enter the number of hours to be spent by Member " << memberID << " for Lab " << labID << ": ";
+    cin >> labHours;
+
+    cout << endl;
+
+    memberTarget->spendLabHours(labHours);
+    labTarget->addHours(labHours);
+    cout << "Successfully spent " << labHours << " of Member " << memberID << "\'s Lab hours for Lab " << labID << "." 
+        << endl << endl;
+}
+
+void refundMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
+    int memberID, labID;
+    Member* memberTarget{ nullptr };
+    Lab* labTarget{ nullptr };
+    string userInput;
+    double labHours;
+
+    cout << "Enter a Member's ID to refund Lab hours or enter \"0\" to return: ";
+    cin >> memberID;
+
+    cout << endl;
+
+    if (memberID == 0) {
+        return;
+    }
+
+    for (int i{ 0 }; i < memberListSize; i++) {
+        if (memberList[i]->getID() == memberID) {
+            memberTarget = memberList[i];
+            break;
+        }
+    }
+
+    if (memberTarget == nullptr) {
+        for (int i{ 0 }; i < observerListSize; i++) {
+            if (observerList[i]->getID() == memberID) {
+                memberTarget = observerList[i];
+                break;
+            }
+        }
+    }
+
+    if (memberTarget == nullptr) {
+        cout << "There is no Member with ID \"" << memberID << "\". Returning to previous menu..." << endl << endl;
+        return;
+    }
+
+    cout << "Enter the ID of the Lab where the Lab hours are refunded from: ";
+    cin >> labID;
+
+    cout << endl;
+
+    for (int i{ 0 }; i < memberTarget->getLabsListSize(); i++) {
+        if (memberTarget->getLabsList()[i]->getID() == labID) {
+            labTarget = memberTarget->getLabsList()[i];
+        }
+    }
+
+    if (labTarget == nullptr) {
+        cout << "Member " << memberID << " does not have Lab " << labID << " in their Lab list. Returning to previous "
+            "menu..." << endl << endl;
+        return;
+    }
+
+    cout << "Enter the number of hours to be refunded to Member " << memberID << " from Lab " << labID << ": ";
+    cin >> labHours;
+
+    cout << endl;
+
+    memberTarget->refundLabHours(labHours);
+    labTarget->refundHours(labHours);
+    cout << "Successfully refunded " << labHours << " hours to Member " << memberID << "\'s balance from Lab " << 
+        labID << "." << endl << endl;
+}
+
 /*
 This function displays the Lab Menu and accepts and verifies commands from the user. Valid commands call helper
 functions or return to the main menu.
@@ -488,8 +706,11 @@ void labMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_A
         cout << "2) Add a Lab" << endl;
         cout << "3) Edit a Lab" << endl;
         cout << "4) Remove a Lab" << endl;
-        cout << "5) Add Member to Lab" << endl;
-        cout << "6) Return to Main Menu" << endl << endl;
+        cout << "5) Assign Observer to Lab" << endl;
+        cout << "6) Remove Observer from lab" << endl;
+        cout << "7) Add Member to Lab" << endl;
+        cout << "8) Remove Member from lab" << endl;
+        cout << "9) Return to Main Menu" << endl << endl;
 
         cout << "Enter a menu option: ";
         cin >> userInput;
@@ -498,21 +719,30 @@ void labMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_A
 
         switch (userInput) {
         case 1:
-            
+            printLabList(labList);
             break;
         case 2:
-            
+            addLab(labList);
             break;
         case 3:
-
+            editLab(labList);
             break;
         case 4:
-
+            removeLab(labList);
             break;
         case 5:
-
+            assignObserverToLab(observerList, labList);
             break;
         case 6:
+            unassignObserver(observerList);
+            break;
+        case 7:
+            assignMemberToLab(memberList, observerList, labList);
+            break;
+        case 8:
+            unassignMemberFromLab(memberList, observerList, labList);
+            break;
+        case 9:
             validInput = true;
             cout << "Returning to main menu..." << endl << endl;
             break;
@@ -520,6 +750,342 @@ void labMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_A
             validInput = false;
             cout << "Invalid input. Please try again." << endl << endl;
         }
+    }
+}
+
+void printLabList(array<Lab*, LAB_ARR_SIZE>& labList) {
+    for (int i{ 0 }; i < labListSize; i++) {
+        cout << labList[i]->toString() << endl;
+    }
+
+    cout << endl;
+}
+
+void addLab(array<Lab*, LAB_ARR_SIZE>& labList) {
+    string userInput;
+    int labID;
+    string type;
+
+    clearBuffer(stdin);
+
+    cout << "Adding new Lab..." << endl;
+    cout << "Enter the Lab's ID or enter \"0\" to return: ";
+    getline(cin, userInput);
+    cout << endl;
+    if (stoi(userInput) == 0) {
+        cout << endl;
+        return;
+    }
+    labID = stoi(userInput);
+
+    cout << "Enter the Lab's ID: ";
+    getline(cin, userInput);
+    cout << endl;
+    type = userInput;
+
+    cout << endl;
+
+    labList[labListSize] = new Lab(labID, type, 0, nullptr);
+    labListSize++;
+}
+
+void editLab(array<Lab*, LAB_ARR_SIZE>& labList) {
+    int labID;
+    Lab* target{ nullptr };
+    string userInput;
+
+    cout << "Enter the Lab's ID to edit or enter \"0\" to return: ";
+    cin >> labID;
+
+    cout << endl;
+
+    if (labID == 0) {
+        return;
+    }
+
+    for (int i{ 0 }; i < labListSize; i++) {
+        if (labList[i]->getID() == labID) {
+            target = labList[i];
+            break;
+        }
+    }
+
+    if (target != nullptr) {
+        clearBuffer(stdin);
+
+        cout << "For the following prompts, enter a new value if the data needs to be changed, otherwise hit ENTER to "
+            "skip." << endl << endl;
+
+        cout << "Enter the Lab's ID: ";
+        getline(cin, userInput);
+        cout << endl;
+        if (userInput != "") {
+            target->setID(stoi(userInput));
+        }
+
+        cout << "Enter the Lab's type: ";
+        getline(cin, userInput);
+        cout << endl;
+        if (userInput != "") {
+            target->setType(userInput);
+        }
+
+        cout << "Enter the Lab's total hours: ";
+        getline(cin, userInput);
+        cout << endl;
+        if (userInput != "") {
+            target->setTotalHours(stod(userInput));
+        }
+    }
+    else {
+        cout << "There is no Lab with ID \"" << labID << "\". Returning to previous menu..." << endl << endl;
+    }
+}
+
+void removeLab(array<Lab*, LAB_ARR_SIZE>& labList) {
+    int labID;
+
+    cout << "Enter the ID of the Lab to remove them or enter \"0\" to return: ";
+    cin >> labID;
+
+    cout << endl;
+
+    if (labID == 0) {
+        return;
+    }
+    else {
+        for (int i{ 0 }; i < labListSize; i++) {
+            if (labList[i]->getID() == labID) {
+                shiftLabListElements(labList, i);
+                cout << "Lab " << labID << " successfully removed from the database." << endl << endl;
+                return;
+            }
+        }
+
+        cout << "There is no Lab with ID \"" << labID << "\". Returning to previous menu..." << endl << endl;
+    }
+}
+
+void assignObserverToLab(array<Observer*, LAB_ARR_SIZE>& observerList, array<Lab*, LAB_ARR_SIZE>& labList) {
+    int observerID, labID;
+    Observer* observerTarget = nullptr;
+    Lab* labTarget = nullptr;
+    
+    cout << "Enter the ID of the Observer to be assigned or enter \"0\" to return";
+    cin >> observerID;
+
+    cout << endl;
+
+    if (observerID == 0) {
+        return;
+    }
+    else {
+        for (int i{ 0 }; i < memberListSize; i++) {
+            if (observerList[i]->getID() == observerID) {
+                observerTarget = observerList[i];
+                break;
+            }
+        }
+
+        if (observerTarget == nullptr) {
+            cout << "There is no Observer with ID \"" << observerID << "\". Returning to previous menu..." << endl << endl;
+            return;
+        }
+    }
+
+    cout << "Enter the ID of the Lab that Observer " << observerID << " should be assigned to: ";
+    cin >> labID;
+
+    cout << endl;
+
+    for (int i{ 0 }; i < labListSize; i++) {
+        if (labList[i]->getID() == labID) {
+            labTarget = labList[i];
+            break;
+        }
+    }
+
+    if (labTarget == nullptr) {
+        cout << "There is no Lab with ID \"" << labID << "\". Returning to previous menu..." << endl << endl;
+        return;
+    }
+    else if (observerTarget->getAssignedLab() == labTarget) {
+        cout << "Observer " << observerID << " is already assigned to Lab " << labID << ". Returning to previous menu..."
+            << endl << endl;
+    }
+    else {
+        // If the Lab already has an Observer, detach the Lab from the Observer
+        if (labTarget->getObserver() != nullptr) {
+            labTarget->getObserver()->setAssignedLab(nullptr);
+        }
+        // If the Observer already has an assigned Lab, detach the Observer from the Lab
+        if (observerTarget->getAssignedLab() != nullptr) {
+            observerTarget->getAssignedLab()->setObserver(nullptr);
+        }
+        attachObserverToLab(observerTarget, labTarget);
+        cout << "Observer " << observerID << " successfully assigned to Lab " << labID << "." << endl << endl;
+    }
+}
+
+void unassignObserver(array<Observer*, LAB_ARR_SIZE>& observerList) {
+    int observerID;
+    Observer* observerTarget = nullptr;
+
+    cout << "Enter the ID of the Observer to be unassigned or enter \"0\" to return";
+    cin >> observerID;
+
+    cout << endl;
+
+    if (observerID == 0) {
+        return;
+    }
+    else {
+        for (int i{ 0 }; i < observerListSize; i++) {
+            if (observerList[i]->getID() == observerID) {
+                observerTarget = observerList[i];
+                break;
+            }
+        }
+
+        if (observerTarget == nullptr) {
+            cout << "There is no Observer with ID \"" << observerID << "\". Returning to previous menu..." << endl << endl;
+            return;
+        }
+        else if (observerTarget->getAssignedLab() == nullptr) {
+            cout << "Observer " << observerID << " is not assigned to any Lab. Returning to previous menu..." << endl << endl;
+        }
+        else {
+            observerTarget->setAssignedLab(nullptr);
+            cout << "Successfully unassigned Observer " << observerID << " from their assigned Lab." << endl << endl;
+        }
+    }
+}
+
+void assignMemberToLab(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList,
+    array<Lab*, LAB_ARR_SIZE>& labList) {
+
+    int memberID, labID;
+    Member* memberTarget = nullptr;
+    Lab* labTarget = nullptr;
+
+    cout << "Enter the ID of the Member to be assigned or enter \"0\" to return";
+    cin >> memberID;
+
+    cout << endl;
+
+    if (memberID == 0) {
+        return;
+    }
+    else {
+        for (int i{ 0 }; i < memberListSize; i++) {
+            if (memberList[i]->getID() == memberID) {
+                memberTarget = memberList[i];
+                break;
+            }
+        }
+
+        if (memberTarget == nullptr) {
+            for (int i{ 0 }; i < observerListSize; i++) {
+                if (observerList[i]->getID() == memberID) {
+                    memberTarget = observerList[i];
+                    break;
+                }
+            }
+        }
+
+        if (memberTarget == nullptr) {
+            cout << "There is no Member with ID \"" << memberID << "\". Returning to previous menu..." << endl << endl;
+            return; 
+        }
+    }
+    
+    cout << "Enter the ID of the Lab that Member " << memberID << " should be assigned to: ";
+    cin >> labID;
+
+    cout << endl;
+
+    for (int i{ 0 }; i < labListSize; i++) {
+        if (labList[i]->getID() == labID) {
+            labTarget = labList[i];
+            break;
+        }
+    }
+
+    if (labTarget == nullptr) {
+        cout << "There is no Lab with ID \"" << labID << "\". Returning to previous menu..." << endl << endl;
+        return;
+    }
+    else if (memberTarget->hasLab(labTarget)) {
+        cout << "Member " << memberID << " is already assigned to Lab " << labID << ". Returning to previous menu..." 
+            << endl << endl;
+    }
+    else {
+        attachMemberToLab(memberTarget, labTarget);
+        cout << "Member " << memberID << " successfully assigned to Lab " << labID << "." << endl << endl;
+    }
+}
+
+void unassignMemberFromLab(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList,
+    array<Lab*, LAB_ARR_SIZE>& labList) {
+
+    int memberID, labID;
+    Member* memberTarget = nullptr;
+    Lab* labTarget = nullptr;
+
+    cout << "Enter the ID of the Member to be assigned or enter \"0\" to return";
+    cin >> memberID;
+
+    cout << endl;
+
+    if (memberID == 0) {
+        return;
+    }
+    else {
+        for (int i{ 0 }; i < memberListSize; i++) {
+            if (memberList[i]->getID() == memberID) {
+                memberTarget = memberList[i];
+                break;
+            }
+        }
+
+        if (memberTarget == nullptr) {
+            for (int i{ 0 }; i < observerListSize; i++) {
+                if (observerList[i]->getID() == memberID) {
+                    memberTarget = observerList[i];
+                    break;
+                }
+            }
+        }
+
+        if (memberTarget == nullptr) {
+            cout << "There is no Member with ID \"" << memberID << "\". Returning to previous menu..." << endl << endl;
+            return;
+        }
+    }
+
+    cout << "Enter the ID of the Lab that Member " << memberID << " should be removed from: ";
+    cin >> labID;
+
+    cout << endl;
+
+    for (int i{ 0 }; i < labListSize; i++) {
+        if (labList[i]->getID() == labID) {
+            labTarget = labList[i];
+            break;
+        }
+    }
+
+    if (labTarget == nullptr) {
+        cout << "There is no Lab with ID \"" << labID << "\". Returning to previous menu..." << endl << endl;
+        return;
+    }
+    else if (!memberTarget->hasLab(labTarget)) {
+        cout << "Member " << memberID << " is not assigned to Lab " << labID << ". Returning to previous menu..."
+            << endl << endl;
+    }
+    else {
+        detachMemberFromLab(memberTarget, labTarget);
+        cout << "Member " << memberID << " successfully removed from Lab " << labID << "." << endl << endl;
     }
 }
 
@@ -738,12 +1304,39 @@ This function takes the member and lab parameter and adds them to each others' r
 Preconditions:  none
 Postconditions: member has been added to lab's memberList and lab has been added to member's labsList
 */
-void addMemberToLab(Member* member, Lab* lab) {
+void attachMemberToLab(Member* member, Lab* lab) {
     member->addLab(lab);
     lab->addMember(member);
 }
 
-void assignObserverToLab(Observer* observer, Lab* lab) {
+void detachMemberFromLab(Member* member, Lab* lab) {
+    member->removeLab(lab);
+    lab->removeMember(member);
+}
+
+void detachMember(Member* member) {
+    for (int i{ 0 }; i < member->getLabsListSize(); i++) {
+        member->getLabsList()[i]->removeMember(member);
+    }
+}
+
+void attachObserverToLab(Observer* observer, Lab* lab) {
     observer->setAssignedLab(lab);
     lab->setObserver(observer);
+}
+
+void deallocateLists(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList,
+    array<Lab*, LAB_ARR_SIZE>& labList) {
+
+    for (int i{ 0 }; i < memberListSize; i++) {
+        delete memberList[i];
+    }
+
+    for (int i{ 0 }; i < observerListSize; i++) {
+        delete observerList[i];
+    }
+
+    for (int i{ 0 }; i < labListSize; i++) {
+        delete labList[i];
+    }
 }

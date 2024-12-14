@@ -34,7 +34,7 @@ public:
 		const double& labHours);
 
 	// Constructor with Member
-	Observer(const Member& member);
+	Observer(Member& member);
 
 	// Copy Constructor
 	Observer(const Observer& observer);

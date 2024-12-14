@@ -25,14 +25,12 @@ Member::Member(const Member& member) {
 	}
 }
 
-Member::~Member() {
-	for (int i{ 0 }; i < this->listSize; i++) {
-		delete this->labsList[i];
-	}
+Lab** Member::getLabsList() {
+	return this->labsList;
 }
 
-Lab* Member::getLabsList() const {
-	return this->labsList[0];
+int Member::getLabsListSize() const {
+	return this->listSize;
 }
 
 double Member::getLabHours() const {
@@ -56,8 +54,7 @@ void Member::addLab(Lab* lab) {
 		}
 	}
 
-	Lab* newLab = new Lab(*lab);
-	this->labsList[listSize] = newLab;
+	this->labsList[listSize] = lab;
 	this->listSize++;
 }
 
@@ -76,6 +73,16 @@ void Member::removeLab(Lab* lab) {
 	}
 
 	cout << "Failed to remove Lab. Lab is not in Member's Labs list." << endl << endl;
+}
+
+bool Member::hasLab(Lab* lab) {
+	for (int i{ 0 }; i < listSize; i++) {
+		if (this->getLabsList()[i] == lab) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void Member::spendLabHours(const double& hours) {
