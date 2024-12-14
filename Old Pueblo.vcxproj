@@ -129,17 +129,27 @@
   <ItemGroup>
     <ClCompile Include="Account.cpp" />
     <ClCompile Include="Administrator.cpp" />
+    <ClCompile Include="defines.cpp" />
     <ClCompile Include="Lab.cpp" />
+    <ClCompile Include="labMenu.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Member.cpp" />
+    <ClCompile Include="memberMenu.cpp" />
     <ClCompile Include="Observer.cpp" />
+    <ClCompile Include="processingFunctions.cpp" />
+    <ClCompile Include="reportMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Account.h" />
     <ClInclude Include="Administrator.h" />
+    <ClInclude Include="defines.h" />
     <ClInclude Include="Lab.h" />
+    <ClInclude Include="labMenu.h" />
     <ClInclude Include="Member.h" />
+    <ClInclude Include="memberMenu.h" />
     <ClInclude Include="Observer.h" />
+    <ClInclude Include="processingFunctions.h" />
+    <ClInclude Include="reportMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="administratordata.dat" />
