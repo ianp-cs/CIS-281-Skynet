@@ -59,8 +59,12 @@ void Lab::setObserver(Observer* observer) {
 	this->observer = observer;
 }
 
-Member* Lab::getMemberList() const {
-	return this->memberList[0];
+Member** Lab::getMemberList() {
+	return this->memberList;
+}
+
+int Lab::getMemberListSize() const {
+	return this->listSize;
 }
 
 void Lab::addHours(const double& hours) {

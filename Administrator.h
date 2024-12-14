@@ -13,7 +13,9 @@ class Administrator {
 public:
 	Administrator() = delete;
 
-	Administrator(int adminID, string name, string password, string email);
+	Administrator(int adminID, string name, string userName, string password, string email);
+
+	string getName() const;
 
 	/*
 	This method is called to allow access into the program. The user must input the name and password for the admin
@@ -22,12 +24,13 @@ public:
 	Postconditions:	If name and password match the account's, the user is able to access the program. Otherwise, it is
 					denied.
 	*/
-	bool login(string name, string password) const;
+	bool login(string userName, string password) const;
 
 private:
 	/* Data Members */
 	int adminID;
 	string name;
+	string userName;
 	string password;
 	string email;
 };

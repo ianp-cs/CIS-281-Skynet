@@ -7,6 +7,8 @@ Description:
 
 #include <iostream>
 #include <array>
+#include <fstream>
+#include <sstream>
 #include "Account.h"
 #include "Administrator.h"
 #include "Lab.h"
@@ -14,8 +16,14 @@ Description:
 #include "Member.h"
 using namespace std;
 
+#define ADMIN_ARR_SIZE 10
 #define MEMBER_ARR_SIZE 100
 #define LAB_ARR_SIZE 20
+#define ADMIN_FILE "administratordata.dat"
+#define MEMBER_FILE "memberdata.dat"
+#define OBSERVER_FILE "observerdata.dat"
+#define LAB_FILE "labdata.dat"
+#define LIST_LINK_FILE "listlinkdata.dat"
 
 static int memberListSize{ 0 };
 static int observerListSize{ 0 };
@@ -25,6 +33,11 @@ static int labListSize{ 0 };
 void userLogin();
 void initializeLists(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList, 
     array<Lab*, LAB_ARR_SIZE>& labList);
+void readMemberFile(array<Member*, MEMBER_ARR_SIZE>& memberList, ifstream& memberFile);
+void readObserverFile(array<Observer*, LAB_ARR_SIZE>& observerList, ifstream& observerFile);
+void readLabFile(array<Lab*, LAB_ARR_SIZE>& labList, ifstream& labFile);
+void readListLinkFile(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList,
+    array<Lab*, LAB_ARR_SIZE>& labList, ifstream& listLinkFile);
 
 // Main Menu Functions
 void memberMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
@@ -70,6 +83,10 @@ void attachMemberToLab(Member* member, Lab* lab);
 void detachMemberFromLab(Member* member, Lab* lab);
 void detachMember(Member* member);
 void attachObserverToLab(Observer* observer, Lab* lab);
+void writeToMemberFile(array<Member*, MEMBER_ARR_SIZE>& memberList);
+void writeToObserverFile(array<Observer*, LAB_ARR_SIZE>& observerList);
+void writeToLabFile(array<Lab*, LAB_ARR_SIZE>& labList);
+void writeToListLinkFile(array<Lab*, LAB_ARR_SIZE>& labList);
 void deallocateLists(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList,
     array<Lab*, LAB_ARR_SIZE>& labList);
 
@@ -113,6 +130,10 @@ int main() {
         case 4:
             validInput = true;
             cout << "Closing the program..." << endl;
+            writeToMemberFile(memberList);
+            writeToObserverFile(observerList);
+            writeToLabFile(labList);
+            writeToListLinkFile(labList);
             deallocateLists(memberList, observerList, labList);
             break;
         default:
@@ -126,83 +147,233 @@ int main() {
 This function authenticates the user's login information. If successful, the user gains access to the program, 
 otherwise they are prompted to try again.
 
-TO DO: Administrator information should be pulled from an encrypted file, it should not be hard-coded.
+Preconditions:  ADMIN_FILE exists and holds at least one administrator entry.
+Postconditions: The user gains access to the program.
 */
 void userLogin() {
-    Administrator admin(1, "a", "a", "BabyBilly@gmail.com"); //create an admin
+    ifstream adminFile(ADMIN_FILE);
+    string line;
+    int count = 0;
+    array<Administrator*, ADMIN_ARR_SIZE> adminList;
+    adminList.fill(nullptr);
     bool loginSuccess{ false };
 
-    while (loginSuccess == false) {
-        string name, password;
+    if (!adminFile.is_open()) {
+        cout << "Failed to find or open Administrator file. Closing program..." << endl << endl;
+        exit(1);
+    }
 
-        cout << "Administrator Login" << endl;
+    while (getline(adminFile, line) && count < ADMIN_ARR_SIZE) {
+        string id, name, userName, password, email;
+
+        istringstream iss(line);
+        getline(iss, id, '~');
+        getline(iss, name, '~');
+        getline(iss, userName, '~');
+        getline(iss, password, '~');
+        getline(iss, email, '~');
+
+        adminList[count] = new Administrator(stoi(id), name, userName, password, email);
+        count++;
+    }
+
+    if (count == 0) {
+        cout << "No Administrator data found. Closing program..." << endl << endl;
+        exit(1);
+    }
+
+    cout << "Administrator Login" << endl;
+    cout << "-------------------" << endl;
+
+    while (loginSuccess == false) {
+        string userName, password;
+
         cout << "Enter Username: ";
-        cin >> name;
+        cin >> userName;
         cout << "Enter Password: ";
         cin >> password;
         cout << endl;
 
-        if (!admin.login(name, password)) {
-            loginSuccess = false;
+        for (int i{ 0 }; i < count; i++) {
+            if (adminList[i]->login(userName, password)) {
+                cout << "Login Successful! Welcome, " << adminList[i]->getName() << "." << endl << endl;
+                loginSuccess = true;
+                break;
+            }
+        }
+
+        if (loginSuccess == false) {
             cout << "Login failed, try again " << endl << endl;
         }
-        else {
-            loginSuccess = true;
-            cout << "Login Successful!" << endl << endl;
-        }
+    }
+
+    for (int i{ 0 }; i < count; i++) {
+        delete adminList[i];
+    }
+    adminFile.close();
+}
+
+/*
+This function initializes memberList, observerList, and labList with data from their respective files. Members' 
+labsLists, Labs' memberLists, Observers' assignedLabs, and Labs' Observers are all attached with the data from the
+listLinkData file.
+Preconditions:  MEMBER_FILE, observerdata.dat, labdata.dat, and listlinkdata.dat exist and hold data in the correct
+                format.
+Postconditions: memberList, observerList, and labList are initialized and linked together as necessary.
+*/
+void initializeLists(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList,
+    array<Lab*, LAB_ARR_SIZE>& labList) {
+
+    // Open files
+    ifstream memberFile(MEMBER_FILE);
+    ifstream observerFile(OBSERVER_FILE);
+    ifstream labFile(LAB_FILE);
+    ifstream listLinkFile(LIST_LINK_FILE);
+
+   // Verify files are open
+    if (!memberFile.is_open()) {
+        cout << "Failed to find or open Member file. Closing program..." << endl << endl;
+        exit(1);
+    }
+    if (!observerFile.is_open()) {
+        cout << "Failed to find or open Observer file. Closing program..." << endl << endl;
+        exit(1);
+    }
+    if (!labFile.is_open()) {
+        cout << "Failed to find or open Lab file. Closing program..." << endl << endl;
+        exit(1);
+    }
+    if (!listLinkFile.is_open()) {
+        cout << "Failed to find or open list link file. Closing program..." << endl << endl;
+        exit(1);
+    }
+
+    // Process files
+    readMemberFile(memberList, memberFile);
+    readObserverFile(observerList, observerFile);
+    readLabFile(labList, labFile);
+    readListLinkFile(memberList, observerList, labList, listLinkFile);
+    
+    // Close files
+    memberFile.close();
+    observerFile.close();
+    labFile.close();
+    listLinkFile.close();
+}
+
+/*
+This function reads the Member file and extracts its data to initialize new Members that are then added to memberList.
+Preconditions:  memberFile was opened successfully.
+Postconditions: memberList has been initialized.
+*/
+void readMemberFile(array<Member*, MEMBER_ARR_SIZE>& memberList, ifstream& memberFile) {
+    string line;
+
+    while (getline(memberFile, line) && memberListSize < MEMBER_ARR_SIZE) {
+        string id, name, email, address, phone, hours;
+
+        istringstream iss(line);
+        getline(iss, id, '~');
+        getline(iss, name, '~');
+        getline(iss, email, '~');
+        getline(iss, address, '~');
+        getline(iss, phone, '~');
+        getline(iss, hours, '~');
+
+        memberList[memberListSize] = new Member(stoi(id), name, email, address, phone, stod(hours));
+        memberListSize++;
     }
 }
 
 /*
-This function initializes various objects to demo the program.
-
-TO DO: This function should be replaced with one that pulls data from all files to initialize the lists.
+This function reads the Observer file and extracts its data to initialize new Observers that are then added to 
+observerList.
+Preconditions:  observerFile was opened successfully.
+Postconditions: observerList has been initialized.
 */
-void initializeLists(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList, 
-    array<Lab*, LAB_ARR_SIZE>& labList) {
+void readObserverFile(array<Observer*, LAB_ARR_SIZE>& observerList, ifstream& observerFile) {
+    string line, id, name, email, address, phone, hours;
+    
+    while (getline(observerFile, line) && observerListSize < LAB_ARR_SIZE) {
+        istringstream iss(line);
 
-    // Initialize Members
-    memberList[0] = new Member(11, "Phil Hartman", "Phartman@gmail.com", "123 Cropdust Ln", "3421243", 0.0);
-    memberListSize++;
-    memberList[1] = new Member(12, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", "3450989", 10.0);
-    memberListSize++;
-    memberList[2] = new Member(13, "Micheal Jordan", "theRealGooooaaat@gmail.com", "345 Rand Ave", "3094953", 12.2);
-    memberListSize++;
-    memberList[3] = new Member(14, "Mary Prescott", "Mprescott@gmail.com", "325 S Sunset Ln", "5989765", 20.5);
-    memberListSize++;
-    memberList[4] = new Member(15, "Robert Jackson", "MrJackson11@yahoo.com", "435 S Cherrywood Ln", "3453245", 7);
-    memberListSize++;
-    memberList[5] = new Member(16, "Boyd Crowder", "crawDaddy@yahoo.com", "643 Grizzly Lane", "4503495", 19);
-    memberListSize++;
+        getline(iss, id, '~');
+        getline(iss, name, '~');
+        getline(iss, email, '~');
+        getline(iss, address, '~');
+        getline(iss, phone, '~');
+        getline(iss, hours, '~');
 
-    // Initialize Members
-    observerList[0] = new Observer(17, "Bob Sagot", "bsagot@aol.com", "123 N Main St", "1234567", 0);
-    observerListSize++;
-    observerList[1] = new Observer(18, "John Doe", "jdoe@yahoo.com", "987 N Uptown St", "1231234", 5.0);
-    observerListSize++;
-    observerList[2] = new Observer(19, "Hally Berry", "hberry@yahoo.com", "456 W Songify Rd", "8675309", 2.5);
-    observerListSize++;
+        observerList[observerListSize] = new Observer(stoi(id), name, email, address, phone, stod(hours));
+        observerListSize++;
+    }
+}
 
-    // Initiailize Labs
-    labList[0] = new Lab(1, "Faceting", 50, observerList[0]);
-    labListSize++;
-    labList[1] = new Lab(2, "Lapidary", 75.2, observerList[1]);
-    labListSize++;
-    labList[2] = new Lab(3, "Blacksmithing", 19.5, observerList[2]);
-    labListSize++;
+/*
+This function reads the Lab file and extracts its data to initialize new Labs that are then added to labList.
+Preconditions:  labFile was opened successfully.
+Postconditions: labList has been initialized.
+*/
+void readLabFile(array<Lab*, LAB_ARR_SIZE>& labList, ifstream& labFile) {
+    string line, id, type, hours;
+    
+    while (getline(labFile, line) && labListSize < LAB_ARR_SIZE) {
+        istringstream iss(line);
 
-    // Add Members to Labs
-    attachMemberToLab(memberList[0], labList[0]);
-    attachMemberToLab(memberList[1], labList[0]);
-    attachMemberToLab(memberList[1], labList[1]);
-    attachMemberToLab(memberList[2], labList[0]);
-    attachMemberToLab(memberList[4], labList[1]);
-    attachMemberToLab(memberList[5], labList[1]);
+        getline(iss, id, '~');
+        getline(iss, type, '~');
+        getline(iss, hours, '~');
 
-    // Assign Labs to Observers
-    attachObserverToLab(observerList[0], labList[0]);
-    attachObserverToLab(observerList[1], labList[1]);
-    attachObserverToLab(observerList[2], labList[2]);
+        labList[labListSize] = new Lab(stoi(id), type, stod(hours), nullptr);
+        labListSize++;
+    }
+}
+
+/*
+This function reads the list link file and extracts its data to initialize every Member's labsList and every Lab's 
+memberList. Every Observer's assignedLab is set, if they have one, and every Lab's Observer is set, if they have one.
+Preconditions:  memberList, observerList, and labList are intialized. listLinkFile was opened successfully.
+Postconditions: All Members' labLists are initalized. All Labs' memberLists are initialized. Each Observer with an
+                assignedLab and every Lab with an Observer are attached together.
+*/
+void readListLinkFile(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList,
+    array<Lab*, LAB_ARR_SIZE>& labList, ifstream& listLinkFile) {
+
+    string line, labID, observerID, memberID;
+    int count{ 0 };
+
+    while (getline(listLinkFile, line) && count < labListSize) {
+        Observer* observerTarget = nullptr;
+        Member* memberTarget = nullptr;
+        istringstream iss(line);
+
+        getline(iss, labID, '~');
+        getline(iss, observerID, '~');
+
+        if (stoi(observerID) != 0) { // 0 means there is no Observer assigned to the Lab
+            for (int i{ 0 }; i < observerListSize; i++) {
+                if (observerList[i]->getID() == stoi(observerID)) {
+                    observerTarget = observerList[i];
+                    break;
+                }
+            }
+
+            attachObserverToLab(observerTarget, labList[count]);
+        }
+
+        while (getline(iss, memberID, '~')) {
+            for (int i{ 0 }; i < memberListSize; i++) {
+                if (memberList[i]->getID() == stoi(memberID)) {
+                    memberTarget = memberList[i];
+                    break;
+                }
+            }
+
+            attachMemberToLab(memberTarget, labList[count]);
+        }
+
+        count++;
+    }
 }
 
 /*
@@ -346,8 +517,6 @@ void addMember(array<Member*, MEMBER_ARR_SIZE>& memberList) {
     getline(cin, userInput);
     cout << endl;
     labHours = stod(userInput);
-
-    cout << endl;
 
     memberList[memberListSize] = new Member(memberID, name, email, address, phoneNum, labHours);
     memberListSize++;
@@ -1505,6 +1674,107 @@ Postconditions: observer is lab's Observer and lab is observer's assignedLab.
 void attachObserverToLab(Observer* observer, Lab* lab) {
     observer->setAssignedLab(lab);
     lab->setObserver(observer);
+}
+
+/*
+This function writes data from the elements of memberList to the MEMBER_FILE. '~' are added to help with reading the
+file at program start. Content in MEMBER_FILE is overwritten with this data.
+Preconditions:  None
+Postconditions: MEMBER_FILE has been updated with the data from memberList
+*/
+void writeToMemberFile(array<Member*, MEMBER_ARR_SIZE>& memberList) {
+    ofstream memberFile(MEMBER_FILE, ios::trunc);
+
+    for (int i{ 0 }; i < memberListSize; i++) {
+        memberFile << memberList[i]->getID() << "~" << memberList[i]->getName() << "~" << memberList[i]->getEmail() <<
+            "~" << memberList[i]->getAddress() << "~" << memberList[i]->getPhoneNum() << "~" << 
+            memberList[i]->getLabHours() << "~";
+
+        // Add a newline for each entry except the last.
+        if (i < memberListSize - 1) {
+            memberFile << endl;
+         }
+    }
+
+    memberFile.close();
+}
+
+/*
+This function writes data from the elements of observerList to the OBSERVER_FILE. '~' are added to help with reading 
+the file at program start. Content in OBSERVER_FILE is overwritten with this data.
+Preconditions:  None
+Postconditions: OBSERVER_FILE has been updated with the data from observerList
+*/
+void writeToObserverFile(array<Observer*, LAB_ARR_SIZE>& observerList) {
+    ofstream observerFile(OBSERVER_FILE, ios::trunc);
+
+    for (int i{ 0 }; i < observerListSize; i++) {
+        observerFile << observerList[i]->getID() << "~" << observerList[i]->getName() << "~" << 
+            observerList[i]->getEmail() << "~" << observerList[i]->getAddress() << "~" << 
+            observerList[i]->getPhoneNum() << "~" << observerList[i]->getLabHours() << "~";
+
+        // Add a newline for each entry except the last.
+        if (i < observerListSize - 1) {
+            observerFile << endl;
+        }
+    }
+
+    observerFile.close();
+}
+
+/*
+This function writes data from the elements of memberList to the LAB_FILE. '~' are added to help with reading the
+file at program start. Content in LAB_FILE is overwritten with this data.
+Preconditions:  None
+Postconditions: LAB_FILE has been updated with the data from labList
+*/
+void writeToLabFile(array<Lab*, LAB_ARR_SIZE>& labList) {
+    ofstream labFile(LAB_FILE, ios::trunc);
+
+    for (int i{ 0 }; i < labListSize; i++) {
+        labFile << labList[i]->getID() << "~" << labList[i]->getType() << "~" << labList[i]->getTotalHours() << "~";
+
+        // Add a newline for each entry except the last.
+        if (i < labListSize - 1) {
+            labFile << endl;
+        }
+    }
+
+    labFile.close();
+}
+
+/*
+This function writes data from the elements of labList to the LIST_LINK_FILE. '~' are added to help with reading the
+file at program start. Content in LIST_LINK_FILE is overwritten with this data. The content of this file provides
+associations between Labs, Members, and Observers using their respective IDs.
+Preconditions:  None
+Postconditions: LIST_LINK_FILE has been updated with the data from labList
+*/
+void writeToListLinkFile(array<Lab*, LAB_ARR_SIZE>& labList) {
+
+    ofstream listLinkFile(LIST_LINK_FILE, ios::trunc);
+
+    for (int i{ 0 }; i < labListSize; i++) {
+        listLinkFile << labList[i]->getID() << "~";
+
+        if (labList[i]->getObserver() == nullptr) {
+            listLinkFile << "0~";
+        }
+        else {
+            listLinkFile << labList[i]->getObserver()->getID() << "~";
+        }
+
+        for (int j{ 0 }; j < labList[i]->getMemberListSize(); j++) {
+            listLinkFile << labList[i]->getMemberList()[j]->getID() << "~";
+        }
+
+        // Add a newline for each entry except the last.
+        if (i < labListSize - 1) {
+            listLinkFile << endl;
+        }
+    }
+
+    listLinkFile.close();
 }
 
 /*

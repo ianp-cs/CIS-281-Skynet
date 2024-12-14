@@ -1,12 +1,17 @@
 #include "Administrator.h"
 
-Administrator::Administrator(int adminID, string name, string password, string email) {
+Administrator::Administrator(int adminID, string name, string userName, string password, string email) {
 	this->adminID = adminID;
 	this->name = name;
+	this->userName = userName;
 	this->password = password;
 	this->email = email;
 }
 
-bool Administrator::login(string name, string password) const {
-	return this->name == name && this->password == password;
+string Administrator::getName() const {
+	return this->name;
+}
+
+bool Administrator::login(string userName, string password) const {
+	return this->userName == userName && this->password == password;
 }

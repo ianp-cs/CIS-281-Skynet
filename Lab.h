@@ -65,7 +65,10 @@ public:
 	void setObserver(Observer* observer);
 
 	// Returns the memberList data member
-	Member* getMemberList() const;
+	Member** getMemberList();
+
+	// Returns the listSize data member
+	int getMemberListSize() const;
 
 /* OTHER METHODS */
 

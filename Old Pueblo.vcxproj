@@ -141,6 +141,13 @@
     <ClInclude Include="Member.h" />
     <ClInclude Include="Observer.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="administratordata.dat" />
+    <None Include="labdata.dat" />
+    <None Include="listlinkdata.dat" />
+    <None Include="memberdata.dat" />
+    <None Include="observerdata.dat" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

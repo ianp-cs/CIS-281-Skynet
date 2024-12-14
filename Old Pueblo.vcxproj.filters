@@ -51,4 +51,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="memberdata.dat">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="observerdata.dat">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="labdata.dat">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="administratordata.dat">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="listlinkdata.dat">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>
