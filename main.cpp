@@ -3,14 +3,6 @@ Program: Old Pueblo Lapidary Club Records Management
 Created By: Ian Penrose, Marie Perez, Lyes Attalah
 Date Created: 11/29/2024
 Description: 
-
-CHANGE HISTORY
----------------------------------------------
-Programmer	Date		Description of Change
----------------------------------------------
-Ian			11/29/2024	Created Administrator, Account, Member, Observer, and Lab classes
-Marie       12/02/2024  Created main
-Ian         12/06/2024  Added further functionality to memberMenu.
 */
 
 #include <iostream>
@@ -35,8 +27,7 @@ void initializeLists(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer
     array<Lab*, LAB_ARR_SIZE>& labList);
 
 // Main Menu Functions
-void memberMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList,
-    array<Lab*, LAB_ARR_SIZE>& labList);
+void memberMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
 void labMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList, 
     array<Lab*, LAB_ARR_SIZE>& labList);
 void reportMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList, 
@@ -111,7 +102,7 @@ int main() {
 
         switch (userInput) {
         case 1:
-            memberMenu(memberList, observerList, labList);
+            memberMenu(memberList, observerList);
             break;
         case 2:
             labMenu(memberList, observerList, labList);
@@ -171,25 +162,25 @@ void initializeLists(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer
     array<Lab*, LAB_ARR_SIZE>& labList) {
 
     // Initialize Members
-    memberList[0] = new Member(11, "Phil Hartman", "Phartman@gmail.com", "123 Cropdust Ln", 3421243, 0.0);
+    memberList[0] = new Member(11, "Phil Hartman", "Phartman@gmail.com", "123 Cropdust Ln", "3421243", 0.0);
     memberListSize++;
-    memberList[1] = new Member(12, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", 3450989, 10.0);
+    memberList[1] = new Member(12, "Julia Kindly", "jewlzizkoolz@aol.com", "143 OakTree Ave", "3450989", 10.0);
     memberListSize++;
-    memberList[2] = new Member(13, "Micheal Jordan", "theRealGooooaaat@gmail.com", "345 Rand Ave", 3094953, 12.2);
+    memberList[2] = new Member(13, "Micheal Jordan", "theRealGooooaaat@gmail.com", "345 Rand Ave", "3094953", 12.2);
     memberListSize++;
-    memberList[3] = new Member(14, "Mary Prescott", "Mprescott@gmail.com", "325 S Sunset Ln", 5989765, 20.5);
+    memberList[3] = new Member(14, "Mary Prescott", "Mprescott@gmail.com", "325 S Sunset Ln", "5989765", 20.5);
     memberListSize++;
-    memberList[4] = new Member(15, "Robert Jackson", "MrJackson11@yahoo.com", "435 S Cherrywood Ln", 3453245, 7);
+    memberList[4] = new Member(15, "Robert Jackson", "MrJackson11@yahoo.com", "435 S Cherrywood Ln", "3453245", 7);
     memberListSize++;
-    memberList[5] = new Member(16, "Boyd Crowder", "crawDaddy@yahoo.com", "643 Grizzly Lane", 4503495, 19);
+    memberList[5] = new Member(16, "Boyd Crowder", "crawDaddy@yahoo.com", "643 Grizzly Lane", "4503495", 19);
     memberListSize++;
 
     // Initialize Members
-    observerList[0] = new Observer(17, "Bob Sagot", "bsagot@aol.com", "123 N Main St", 1234567, 0);
+    observerList[0] = new Observer(17, "Bob Sagot", "bsagot@aol.com", "123 N Main St", "1234567", 0);
     observerListSize++;
-    observerList[1] = new Observer(18, "John Doe", "jdoe@yahoo.com", "987 N Uptown St", 1231234, 5.0);
+    observerList[1] = new Observer(18, "John Doe", "jdoe@yahoo.com", "987 N Uptown St", "1231234", 5.0);
     observerListSize++;
-    observerList[2] = new Observer(19, "Hally Berry", "hberry@yahoo.com", "456 W Songify Rd", 8675309, 2.5);
+    observerList[2] = new Observer(19, "Hally Berry", "hberry@yahoo.com", "456 W Songify Rd", "8675309", 2.5);
     observerListSize++;
 
     // Initiailize Labs
@@ -217,11 +208,10 @@ void initializeLists(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer
 /*
 This function displays the Member Menu and accepts and verifies commands from the user. Valid commands call helper 
 functions or return to the main menu.
-
-TO DO: Make sure to add function calls for helper functions after they're made.
+Preconditions:  memberList and observerList are initialized with data.
+Postconditions: The command input by the user is processed.
 */
-void memberMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList,
-    array<Lab*, LAB_ARR_SIZE>& labList) {
+void memberMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
 
     int userInput;
     bool validInput{ false };
@@ -236,7 +226,7 @@ void memberMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LA
         cout << "5) Promote/Demote to Observer" << endl;
         cout << "6) Add Lab Hours to Member" << endl;
         cout << "7) Spend Member's Lab Hours" << endl;
-        cout << "8) Refund Member's lab Hours" << endl;
+        cout << "8) Refund Member's Lab Hours" << endl;
         cout << "9) Return to Main Menu" << endl << endl;
 
         cout << "Enter a menu option: ";
@@ -283,22 +273,31 @@ void memberMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LA
 /*
 This helper function prints out every Member in the Member and Observer lists.
 Preconditions:  memberList and observerList have been initialized with Members
-Postconditions: all Members in memberList and observerList are printed to the console.
+Postconditions: All Members in memberList and observerList are printed to the console.
 */
 void printMembersList(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
+    cout << "Member ID    Role      Name                  Email                         Address                       "
+        " Phone" << endl;
+    cout << "---------------------------------------------------------------------------------------------------------"
+        "-----------" << endl;
+
     for (int i{ 0 }; i < observerListSize; i++) {
-        cout << observerList[i]->toString() << endl;
+        observerList[i]->print();
     }
 
     for (int i{ 0 }; i < memberListSize; i++) {
-        cout << memberList[i]->toString() << endl;
+        memberList[i]->print();
     }
 
     cout << endl;
 }
 
 /*
-This helper function adds a user input Member to memberList.
+This helper function takes user input to create a new Member and adds it to memberList.
+Preconditions:  The user input Member is not already in memberList.
+Postconditions: If the user input data passes validation and the Member does not already exist, the Member is created
+                and added to memberList. Otherwise, a relevant error message is printed to the console and control is
+                returned to the memberMenu.
 
 TO DO: Add input verification and error handling.
 */
@@ -308,7 +307,7 @@ void addMember(array<Member*, MEMBER_ARR_SIZE>& memberList) {
     string name;
     string email;
     string address;
-    int phoneNum;
+    string phoneNum;
     double labHours;
 
     clearBuffer(stdin);
@@ -341,7 +340,7 @@ void addMember(array<Member*, MEMBER_ARR_SIZE>& memberList) {
     cout << "Enter the Member's phone number (without special characters or spaces): ";
     getline(cin, userInput);
     cout << endl;
-    phoneNum = stoi(userInput);
+    phoneNum = userInput;
 
     cout << "Enter the Member's available lab hours: ";
     getline(cin, userInput);
@@ -354,6 +353,14 @@ void addMember(array<Member*, MEMBER_ARR_SIZE>& memberList) {
     memberListSize++;
 }
 
+/*
+This helper function edits an existing member in memberList using data input by the user.
+Preconditions:  The Member to be edited already exists and is in memberList.
+Postconditions: The Member is updated with new data input by the user, if the input passes validation. Otherwise, a 
+                relevant error message is printed to the console and control is returned to memberMenu.
+
+TO DO: Add input verification and error handling.
+*/
 void editMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
     int memberID;
     Member* target{ nullptr };
@@ -421,7 +428,7 @@ void editMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LA
         getline(cin, userInput);
         cout << endl;
         if (userInput != "") {
-            target->setPhoneNum(stoi(userInput));
+            target->setPhoneNum(userInput);
         }
 
         cout << "Enter the Member's available lab hours: ";
@@ -436,6 +443,14 @@ void editMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LA
     }
 }
 
+/*
+This helper function removes an existing member from memberList.
+Preconditions:  The Member to be removed exists and is in memberList.
+Postconditions: The Member is removed from memberList and memberList's elements are shifted to the left to replace 
+                Member. If the Member does not exist, an error message is printed to the console.
+
+TO DO: Add input verification and error handling.
+*/
 void removeMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
     int memberID;
 
@@ -471,6 +486,17 @@ void removeMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, 
     }
 }
 
+/*
+This helper function turns the input Member into an Observer, if the input is a Member, otherwise the input is an 
+Observer and they are converted into a Member. The Member/Observer is removed from their original list and added to 
+the respective list.
+Preconditions:  The Member/Observer exists in their respective list.
+Postconditions: If the input is a Member, the Member is removed from memberList and a new Observer is created using the
+                Member's data and added to observerList. Otherwise, the input is an Observer, and they are removed from 
+                observerList and a new Member is created using the Observer's data and added to memberList.
+
+TO DO: Add input verification and error handling.
+*/
 void toggleObserverStatus(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
     int memberID;
 
@@ -515,6 +541,15 @@ void toggleObserverStatus(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Obs
     }
 }
 
+/*
+This helper function adds lab hours to a Member selected by the user. The number of lab hours added is specified by the
+user.
+Preconditions:  The Member exists in memberList or observerList. The input lab hours must be a postive value.
+Postconditions: The input lab hours is added to the selected Member's total available lab hours. If the input lab hours
+                are negative or the selected Member doesn't exist, a relevant error message is printed to the console.
+
+TO DO: Add input verification and error handling.
+*/
 void addMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
     int memberID;
     Member* target{ nullptr };
@@ -559,6 +594,17 @@ void addMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observ
     cout << "There is no Member with ID \"" << memberID << "\". Returning to previous menu..." << endl << endl;
 }
 
+/*
+This helper function takes a user input Member, Lab, and number of hours. The hours are subtracted from the Member's
+lab hours balance and added to the Lab's total hours amount.
+Preconditions:  The Member exists in memberList or observerList. The Lab exists and is in the Member's labList. The 
+                input lab hours must be a postive value.
+Postconditions: The input lab hours are subtracted from the selected Member's total available lab hours and are added 
+                to the selected Lab's total hours. If the input lab hours are negative, or the selected Member or Lab 
+                don't exist, a relevant error message is printed to the console.
+
+TO DO: Add input verification and error handling.
+*/
 void spendMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
     int memberID, labID;
     Member* memberTarget{ nullptr };
@@ -624,6 +670,17 @@ void spendMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Obse
         << endl << endl;
 }
 
+/*
+This helper function takes a user input Member, Lab, and number of hours. The hours are added to the Member's lab hours 
+balance and subtracted from the Lab's total hours amount.
+Preconditions:  The Member exists in memberList or observerList. The Lab exists and is in the Member's labList. The
+                input lab hours must be a postive value.
+Postconditions: The input lab hours are added to the selected Member's total available lab hours and are subtracted
+                from the selected Lab's total hours. If the input lab hours are negative, or the selected Member or Lab
+                don't exist, a relevant error message is printed to the console.
+
+TO DO: Add input verification and error handling.
+*/
 void refundMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
     int memberID, labID;
     Member* memberTarget{ nullptr };
@@ -692,8 +749,8 @@ void refundMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Obs
 /*
 This function displays the Lab Menu and accepts and verifies commands from the user. Valid commands call helper
 functions or return to the main menu.
-
-TO DO: Make sure to add function calls for helper functions after they're made.
+Preconditions:  memberList, observerList, and labList are initialized with data.
+Postconditions: The command input by the user is processed.
 */
 void labMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList, array<Lab*, LAB_ARR_SIZE>& labList) {
     int userInput;
@@ -753,14 +810,31 @@ void labMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_A
     }
 }
 
+/*
+This helper function prints out every Lab in labList.
+Preconditions:  labList has been initialized with Labs
+Postconditions: All Labs in labList are printed to the console.
+*/
 void printLabList(array<Lab*, LAB_ARR_SIZE>& labList) {
+    cout << "Lab ID    Type                Observer" << endl;
+    cout << "----------------------------------------------------" << endl;
+
     for (int i{ 0 }; i < labListSize; i++) {
-        cout << labList[i]->toString() << endl;
+        labList[i]->print();
     }
 
     cout << endl;
 }
 
+/*
+This helper function takes user input to create a new Lab and adds it to labList.
+Preconditions:  The user input Lab is not already in labList.
+Postconditions: If the user input data passes validation and the Lab does not already exist, the Lab is created and 
+                added to labList. Otherwise, a relevant error message is printed to the console and control is returned
+                to the labMenu.
+
+TO DO: Add input verification and error handling.
+*/
 void addLab(array<Lab*, LAB_ARR_SIZE>& labList) {
     string userInput;
     int labID;
@@ -778,17 +852,23 @@ void addLab(array<Lab*, LAB_ARR_SIZE>& labList) {
     }
     labID = stoi(userInput);
 
-    cout << "Enter the Lab's ID: ";
+    cout << "Enter the Lab's type: ";
     getline(cin, userInput);
     cout << endl;
     type = userInput;
-
-    cout << endl;
 
     labList[labListSize] = new Lab(labID, type, 0, nullptr);
     labListSize++;
 }
 
+/*
+This helper function edits an existing member in labList using data input by the user.
+Preconditions:  The Lab to be edited already exists and is in labList.
+Postconditions: The Lab is updated with new data input by the user, if the input passes validation. Otherwise, a
+                relevant error message is printed to the console and control is returned to labMenu.
+
+TO DO: Add input verification and error handling.
+*/
 void editLab(array<Lab*, LAB_ARR_SIZE>& labList) {
     int labID;
     Lab* target{ nullptr };
@@ -842,6 +922,14 @@ void editLab(array<Lab*, LAB_ARR_SIZE>& labList) {
     }
 }
 
+/*
+This helper function removes an existing member from memberList.
+Preconditions:  The Member to be removed exists and is in memberList.
+Postconditions: The Member is removed from memberList and memberList's elements are shifted to the left to replace
+                Member. If the Member does not exist, an error message is printed to the console.
+
+TO DO: Add input verification and error handling.
+*/
 void removeLab(array<Lab*, LAB_ARR_SIZE>& labList) {
     int labID;
 
@@ -866,12 +954,21 @@ void removeLab(array<Lab*, LAB_ARR_SIZE>& labList) {
     }
 }
 
+/*
+This helper function assigns the user input Observer to the user input Lab.
+Preconditions:  The Observer and Lab exist and are in their respective lists.
+Postconditions: The user input Observer has Lab as its assignedLab and Lab has Observer as its Observer. If the
+                Observer already had an assignedLab, it is removed as that Lab's Observer. If the Lab already had an
+                Observer, the Observer has Lab removed as its assignedLab.
+
+TO DO: Add input verification and error handling.
+*/
 void assignObserverToLab(array<Observer*, LAB_ARR_SIZE>& observerList, array<Lab*, LAB_ARR_SIZE>& labList) {
     int observerID, labID;
     Observer* observerTarget = nullptr;
     Lab* labTarget = nullptr;
     
-    cout << "Enter the ID of the Observer to be assigned or enter \"0\" to return";
+    cout << "Enter the ID of the Observer to be assigned or enter \"0\" to return: ";
     cin >> observerID;
 
     cout << endl;
@@ -888,7 +985,8 @@ void assignObserverToLab(array<Observer*, LAB_ARR_SIZE>& observerList, array<Lab
         }
 
         if (observerTarget == nullptr) {
-            cout << "There is no Observer with ID \"" << observerID << "\". Returning to previous menu..." << endl << endl;
+            cout << "There is no Observer with ID \"" << observerID << "\". Returning to previous menu..." << endl 
+                << endl;
             return;
         }
     }
@@ -910,8 +1008,8 @@ void assignObserverToLab(array<Observer*, LAB_ARR_SIZE>& observerList, array<Lab
         return;
     }
     else if (observerTarget->getAssignedLab() == labTarget) {
-        cout << "Observer " << observerID << " is already assigned to Lab " << labID << ". Returning to previous menu..."
-            << endl << endl;
+        cout << "Observer " << observerID << " is already assigned to Lab " << labID << ". Returning to previous " 
+            "menu..."  << endl << endl;
     }
     else {
         // If the Lab already has an Observer, detach the Lab from the Observer
@@ -927,11 +1025,19 @@ void assignObserverToLab(array<Observer*, LAB_ARR_SIZE>& observerList, array<Lab
     }
 }
 
+/*
+This helper function removes the association between an Observer and their assignedLab, and vice-versa.
+Preconditions:  The Observer exists and it has an assignedLab. The assignedLab has Observer as its Observer.
+Postconditions: The user input Observer has no assignedLab and its prior assignedLab does not have Observer as its
+                Observer.
+
+TO DO: Add input verification and error handling.
+*/
 void unassignObserver(array<Observer*, LAB_ARR_SIZE>& observerList) {
     int observerID;
     Observer* observerTarget = nullptr;
 
-    cout << "Enter the ID of the Observer to be unassigned or enter \"0\" to return";
+    cout << "Enter the ID of the Observer to be unassigned or enter \"0\" to return: ";
     cin >> observerID;
 
     cout << endl;
@@ -948,19 +1054,30 @@ void unassignObserver(array<Observer*, LAB_ARR_SIZE>& observerList) {
         }
 
         if (observerTarget == nullptr) {
-            cout << "There is no Observer with ID \"" << observerID << "\". Returning to previous menu..." << endl << endl;
+            cout << "There is no Observer with ID \"" << observerID << "\". Returning to previous menu..." << endl 
+                << endl;
             return;
         }
         else if (observerTarget->getAssignedLab() == nullptr) {
-            cout << "Observer " << observerID << " is not assigned to any Lab. Returning to previous menu..." << endl << endl;
+            cout << "Observer " << observerID << " is not assigned to any Lab. Returning to previous menu..." << endl 
+                << endl;
         }
         else {
+            observerTarget->getAssignedLab()->setObserver(nullptr);
             observerTarget->setAssignedLab(nullptr);
             cout << "Successfully unassigned Observer " << observerID << " from their assigned Lab." << endl << endl;
         }
     }
 }
 
+/*
+This helper function assigns a user input Member to a user input Lab, linking the two together via their labsList and memberList.
+Preconditions:  The user input Member and Lab both exist, and the Member is not in Lab's memberList and the Lab is not
+                   in the Member's labList.
+Postconditions: The user input Member is in the user input Lab's memberList and the Lab is in the Member's labsList.
+
+TO DO: Add input verification and error handling.
+*/
 void assignMemberToLab(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList,
     array<Lab*, LAB_ARR_SIZE>& labList) {
 
@@ -968,7 +1085,7 @@ void assignMemberToLab(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observ
     Member* memberTarget = nullptr;
     Lab* labTarget = nullptr;
 
-    cout << "Enter the ID of the Member to be assigned or enter \"0\" to return";
+    cout << "Enter the ID of the Member to be assigned or enter \"0\" to return: ";
     cin >> memberID;
 
     cout << endl;
@@ -1025,6 +1142,16 @@ void assignMemberToLab(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observ
     }
 }
 
+/*
+This helper function unassigns a user input Member from a user input Lab, removing them from the others' labsList and 
+memberList, respectively.
+Preconditions:  The user input Member and Lab both exist, and the Member is in Lab's memberList and the Lab is in the
+                Member's labList.
+Postconditions: The user input Member is in no longer in the user input Lab's memberList and the Lab is no longer in 
+                the Member's labsList.
+
+TO DO: Add input verification and error handling.
+*/
 void unassignMemberFromLab(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList,
     array<Lab*, LAB_ARR_SIZE>& labList) {
 
@@ -1032,7 +1159,7 @@ void unassignMemberFromLab(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Ob
     Member* memberTarget = nullptr;
     Lab* labTarget = nullptr;
 
-    cout << "Enter the ID of the Member to be assigned or enter \"0\" to return";
+    cout << "Enter the ID of the Member to be assigned or enter \"0\" to return: ";
     cin >> memberID;
 
     cout << endl;
@@ -1092,10 +1219,12 @@ void unassignMemberFromLab(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Ob
 /*
 This function displays the Pull Reports Menu and accepts and verifies commands from the user. Valid commands call 
 helper functions or return to the main menu.
-
-TO DO: This function and its helper functions will likely need to be changed if a Report class is added to the program
+Preconditions:  memberList, observerList, and labList are initialized with data.
+Postconditions: The command input by the user is processed.
 */
-void reportMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList, array<Lab*, LAB_ARR_SIZE>& labList) {
+void reportMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList, array<Lab*, 
+    LAB_ARR_SIZE>& labList) {
+
     int userInput;
     bool validInput{ false };
 
@@ -1139,6 +1268,8 @@ void reportMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LA
 
 /*
 This helper function takes a user input Member ID and uses it to print the Member's Report to the console.
+Preconditions:  The input Member exists in memberList or observerList.
+Postconditions: Every Member's report is printed to the console.
 
 TO DO: Add input verification and error handling.
 */
@@ -1171,6 +1302,8 @@ void pullMemberReport(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observe
 
 /*
 This helper function takes a user input Lab ID and uses it to print the Lab's Report to the console.
+Preconditions:  The input Lab exists in labList.
+Postconditions: Every Lab's report is printed to the console.
 
 TO DO: Add input verification and error handling.
 */
@@ -1231,24 +1364,35 @@ void pullAllLabsReport(array<Lab*, LAB_ARR_SIZE>& labList) {
 
 /*
 This function clears the input buffer of the stream parameter.
-Input: FILE pointer fp
-Output: none
+Preconditions:  None
+Postconditions: The buffer is cleared of any remaining characters.
 */
 void clearBuffer(FILE* fp) {
     char ch;
     while ((ch = getc(fp)) != '\n' && ch != EOF);
 }
 
+/*
+This function deallocates the memory of the memberList element at pos and shift every element to the right of it back 
+to the left, if there are any.
+Preconditions:  memberList has been intialized with data and pos is within the bounds of memberList.
+Postconditions: The memberList element at pos is set to a nullptr or has been overwritten with the element to its 
+                right. Every element to the right of pos, if any, are shifted to the left. The memory allocated for 
+                the element is deallocated.
+*/
 void shiftMemberListElements(array<Member*, MEMBER_ARR_SIZE>& memberList, const int& pos) {
     int listSize = memberListSize;
 
     if (pos == memberList.max_size() - 1) { // If pos is the last element in labsList
+        delete memberList[pos];
         memberList[pos] = nullptr;
     }
     else if (listSize == 1) { // If pos is the only element in the list
+        delete memberList[pos];
         memberList[pos] = nullptr;
     }
     else {
+        delete memberList[pos];
         for (int i{ pos }; i < listSize - 1; i++) {
             memberList[i] = memberList[i + 1];
         }
@@ -1259,16 +1403,27 @@ void shiftMemberListElements(array<Member*, MEMBER_ARR_SIZE>& memberList, const 
     memberListSize--;
 }
 
+/*
+This function deallocates the memory of the observerList element at pos and shift every element to the right of it back
+to the left, if there are any.
+Preconditions:  observerList has been intialized with data and pos is within the bounds of observerList.
+Postconditions: The observerList element at pos is set to a nullptr or has been overwritten with the element to its
+                right. Every element to the right of pos, if any, are shifted to the left. The memory allocated for
+                the element is deallocated.
+*/
 void shiftObserverListElements(array<Observer*, LAB_ARR_SIZE>& observerList, const int& pos) {
     int listSize = observerListSize;
 
     if (pos == observerList.max_size() - 1) { // If pos is the last element in labsList
+        delete observerList[pos];
         observerList[pos] = nullptr;
     }
     else if (listSize == 1) { // If pos is the only element in the list
+        delete observerList[pos];
         observerList[pos] = nullptr;
     }
     else {
+        delete observerList[pos];
         for (int i{ pos }; i < listSize - 1; i++) {
             observerList[i] = observerList[i + 1];
         }
@@ -1279,16 +1434,27 @@ void shiftObserverListElements(array<Observer*, LAB_ARR_SIZE>& observerList, con
     observerListSize--;
 }
 
+/*
+This function deallocates the memory of the labList element at pos and shift every element to the right of it back to 
+the left, if there are any.
+Preconditions:  labList has been intialized with data and pos is within the bounds of labList.
+Postconditions: The labList element at pos is set to a nullptr or has been overwritten with the element to its right. 
+                Every element to the right of pos, if any, are shifted to the left. The memory allocated for
+                the element is deallocated.
+*/
 void shiftLabListElements(array<Lab*, LAB_ARR_SIZE>& labList, const int& pos) {
     int listSize = labListSize;
 
     if (pos == labList.max_size() - 1) { // If pos is the last element in labsList
+        delete labList[pos];
         labList[pos] = nullptr;
     }
     else if (listSize == 1) { // If pos is the only element in the list
+        delete labList[pos];
         labList[pos] = nullptr;
     }
     else {
+        delete labList[pos];
         for (int i{ pos }; i < listSize - 1; i++) {
             labList[i] = labList[i + 1];
         }
@@ -1301,30 +1467,51 @@ void shiftLabListElements(array<Lab*, LAB_ARR_SIZE>& labList, const int& pos) {
 
 /*
 This function takes the member and lab parameter and adds them to each others' respective lists.
-Preconditions:  none
-Postconditions: member has been added to lab's memberList and lab has been added to member's labsList
+Preconditions:  None
+Postconditions: member has been added to lab's memberList and lab has been added to member's labsList.
 */
 void attachMemberToLab(Member* member, Lab* lab) {
     member->addLab(lab);
     lab->addMember(member);
 }
 
+/*
+This function takes the member and lab parameter and removes them to each others' respective lists. Verification that
+they are in each others' lists is performed before this function is called.
+Preconditions:  member is in lab's memberList and lab is in member's labsList.
+Postconditions: member has been removed lab's memberList and lab has been removed from member's labsList.
+*/
 void detachMemberFromLab(Member* member, Lab* lab) {
     member->removeLab(lab);
     lab->removeMember(member);
 }
 
+/*
+This function takes the member parameter and removes it from all of the Labs in its labList.
+Preconditions:  None
+Postconditions: Every Lab in member's labsList do not have member in their memberLists.
+*/
 void detachMember(Member* member) {
     for (int i{ 0 }; i < member->getLabsListSize(); i++) {
         member->getLabsList()[i]->removeMember(member);
     }
 }
 
+/*
+This function sets observer to be lab's Observer and lab to be observer's assignedLab.
+Preconditions:  None
+Postconditions: observer is lab's Observer and lab is observer's assignedLab.
+*/
 void attachObserverToLab(Observer* observer, Lab* lab) {
     observer->setAssignedLab(lab);
     lab->setObserver(observer);
 }
 
+/*
+This function deallocates all of the memory allocated for the elements in memberList, observerList, and labList.
+Preconditions:  All of the elements in memberList, observerList, and labList were created with keyword new.
+Postconditions: Every element in memberList, observerList, and labList have had their memory deallocated.
+*/
 void deallocateLists(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList,
     array<Lab*, LAB_ARR_SIZE>& labList) {
 

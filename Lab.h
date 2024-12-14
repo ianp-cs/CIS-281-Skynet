@@ -110,7 +110,7 @@ public:
 	Preconditions:	None
 	Postconditions:	A string containing all of the data members of the Lab is returned.
 	*/
-	string toString();
+	void print();
 
 	/*
 	This method prints the Lab's formatted information, including the ID, type, total hours, Observer, and memberList, to 

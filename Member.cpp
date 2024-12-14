@@ -7,7 +7,7 @@ Member::Member() : Account() {
 }
 
 Member::Member(const int& accountID, const string& name, const string& email, const string& address, 
-	const int& phoneNum, const double& labHours) : Account(accountID, name, email, address, phoneNum) {
+	const string& phoneNum, const double& labHours) : Account(accountID, name, email, address, phoneNum) {
 
 	this->labHours = labHours;
 }
@@ -93,10 +93,9 @@ void Member::refundLabHours(const double& hours) {
 	this->labHours += hours;
 }
 
-string Member::toString() const {
-	// Add and adjust formatting as necessary
-	return to_string(this->getID()) + " Member " + this->getName() + " " + this->getEmail() + " " + this->getAddress() + 
-		" " + to_string(this->getPhoneNum());
+void Member::print() const {
+	cout << left << setw(13) << this->getID() << setw(10) << "Member" << setw(22) << this->getName() << setw(30) << 
+		this->getEmail() << setw(31) << this->getAddress() << this->getPhoneNum() << endl;
 }
 
 void Member::pullReport() const {

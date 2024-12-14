@@ -6,7 +6,7 @@ Observer::Observer() : Member() {
 }
 
 Observer::Observer(const int& accountID, const string& name, const string& email, const string& address, 
-	const int& phoneNum, const double& labHours) : Member(accountID, name, email, address, phoneNum, labHours) {
+	const string& phoneNum, const double& labHours) : Member(accountID, name, email, address, phoneNum, labHours) {
 
 	this->setAssignedLab(nullptr);
 }
@@ -20,7 +20,7 @@ Observer::Observer(Member& member) {
 	this->labHours = member.getLabHours();
 	this->setAssignedLab(nullptr);
 
-	int listLength{sizeof(*member.getLabsList()) / sizeof(member.getLabsList()[0])};
+	int listLength{sizeof(**member.getLabsList()) / sizeof(*member.getLabsList()[0])};
 
 	for (int i{ 0 }; i < listLength; i++) {
 		this->addLab(member.getLabsList()[i]);
@@ -49,10 +49,9 @@ void Observer::setAssignedLab(Lab* lab) {
 	this->assignedLab = lab;
 }
 
-string Observer::toString() const {
-	// Add and adjust formatting as necessary
-	return to_string(this->getID()) + " Observer " + this->getName() + " " + this->getEmail() + " " + this->getAddress() +
-		" " + to_string(this->getPhoneNum());
+void Observer::print() const {
+	cout << left << setw(13) << this->getID() << setw(10) << "Observer" << setw(22) << this->getName() << setw(30) <<
+		this->getEmail() << setw(31) << this->getAddress() << this->getPhoneNum() << endl;
 }
 
 void Observer::pullReport() const {

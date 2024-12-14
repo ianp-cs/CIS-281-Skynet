@@ -30,8 +30,8 @@ public:
 	Observer();
 
 	// Constructor with parameters
-	Observer(const int& accountID, const string& name, const string& email, const string& address, const int& phoneNum, 
-		const double& labHours);
+	Observer(const int& accountID, const string& name, const string& email, const string& address, 
+		const string& phoneNum, const double& labHours);
 
 	// Constructor with Member
 	Observer(Member& member);
@@ -55,7 +55,7 @@ public:
 	Preconditions:	None
 	Postconditions:	A string containing all of the data members of the Observer is returned.
 	*/
-	string toString() const;
+	void print() const;
 
 	/*
 	This method prints the Observer's formatted information, including their personal details, labList, and assigned 

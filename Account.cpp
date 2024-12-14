@@ -5,11 +5,11 @@ Account::Account() {
 	this->setName("NO NAME");
 	this->setEmail("NO EMAIL");
 	this->setAddress("NO ADDRESS");
-	this->setPhoneNum(0);
+	this->setPhoneNum("NO PHONE NUMBER");
 }
 
 Account::Account(const int& accountID, const string& name, const string& email, const string& address, 
-	const int& phoneNum) {
+	const string& phoneNum) {
 
 	this->setID(accountID);
 	this->setName(name);
@@ -58,11 +58,11 @@ void Account::setAddress(const string& address) {
 	this->address = address;
 }
 
-int Account::getPhoneNum() const {
+string Account::getPhoneNum() const {
 	return this->phoneNum;
 }
 
-void Account::setPhoneNum(const int& phoneNum) {
+void Account::setPhoneNum(const string& phoneNum) {
 	this->phoneNum = phoneNum;
 }
 

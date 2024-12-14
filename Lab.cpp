@@ -109,9 +109,13 @@ void Lab::removeMember(Member* member) {
 	cout << "Failed to remove Member. Member is not in Lab's Members list." << endl << endl;
 }
 
-string Lab::toString() {
-	// Add and adjust formatting as necessary
-	return to_string(this->getID()) + " " + this->getType() + " " + this->getObserver()->getName();
+void Lab::print() {
+	if (this->getObserver() != nullptr) {
+		cout << left << setw(10) << this->getID() << setw(20) << this->getType() << this->getObserver()->getName() << endl;
+	}
+	else {
+		cout << left << setw(10) << this->getID() << setw(20) << this->getType() << " None Assigned" << endl;
+	}
 }
 
 void Lab::pullReport() {
@@ -135,7 +139,7 @@ void Lab::pullReport() {
 		for (int i{ 0 }; i < this->listSize; i++) {
 			Member* member = this->memberList[i];
 			cout << left << setw(14) << to_string(member->getID()) << setw(22) << member->getName() << setw(33) <<
-				member->getEmail() << to_string(member->getPhoneNum()) << endl;
+				member->getEmail() << member->getPhoneNum() << endl;
 		}
 	}
 	else {

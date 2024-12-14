@@ -20,7 +20,7 @@ public:
 	Account();
 
 	// Constructor with parameters
-	Account(const int& accountID, const string& name, const string& email, const string& address, const int& phoneNum);
+	Account(const int& accountID, const string& name, const string& email, const string& address, const string& phoneNum);
 
 	// Copy Constructor
 	Account(const Account& account);
@@ -52,10 +52,10 @@ public:
 	void setAddress(const string& address);
 
 	// Returns the phoneNum data member
-	int getPhoneNum() const;
+	string getPhoneNum() const;
 
 	// Sets the phoneNum data member
-	void setPhoneNum(const int& phoneNum);
+	void setPhoneNum(const string& phoneNum);
 
 /* OTHER METHODS */
 
@@ -65,7 +65,7 @@ public:
 	Preconditions:	None
 	Postconditions:	A string containing all of the data members of the account is returned.
 	*/
-	virtual string toString() const = 0;
+	virtual void print() const = 0;
 
 private:
 /* DATA MEMBERS */
@@ -74,7 +74,7 @@ private:
 	string name;	// Name of club member
 	string email;	// Email for club member
 	string address;	// Physical address of club member
-	int phoneNum;	// Contact phone number for club member
+	string phoneNum;	// Contact phone number for club member
 
 };
 

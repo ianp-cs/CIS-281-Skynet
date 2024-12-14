@@ -33,8 +33,8 @@ public:
 	Member();
 
 	// Constructor with parameters
-	Member(const int& accountID, const string& name, const string& email, const string& address, const int& phoneNum, 
-		const double& labHours);
+	Member(const int& accountID, const string& name, const string& email, const string& address, 
+		const string& phoneNum, const double& labHours);
 
 	// Copy Constructor
 	Member(const Member& member);
@@ -98,7 +98,7 @@ public:
 	Preconditions:	None
 	Postconditions:	A string containing all of the data members of the Member is returned.
 	*/
-	string toString() const;
+	void print() const;
 
 	/*
 	This method prints the Member's formatted information, including their personal details and labList, to the
