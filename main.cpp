@@ -3,7 +3,10 @@ Program: Old Pueblo Lapidary Club Records Management
 Created By: Ian Penrose, Marie Perez, Lyes Attalah
 Date Created: 11/29/2024
 Last Updated: 12/14/2024
-Description: 
+Description: This program is record management system for the Old Pueblo Lapidary Club. It helps track Club Members,
+Labs, and Lab Observers, including Lab rosters, Members' lists of the labs they're attending, and Observers' assigned
+Labs. Administrator credentials are required to access the program and make changes to records. Operations have been
+separated into different menus, generally grouped by operations for Members, for Labs, and for pulling Reports.
 */
 
 #include <iostream>
