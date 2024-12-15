@@ -22,8 +22,6 @@ This function displays the Member Menu and accepts and verifies commands from th
 functions or return to the main menu.
 Preconditions:  memberList and observerList are initialized with data.
 Postconditions: The command input by the user is processed.
-
-TO DO: Add input verification and error handling.
 */
 void memberMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
 
@@ -40,18 +38,14 @@ Preconditions:  The user input Member is not already in memberList.
 Postconditions: If the user input data passes validation and the Member does not already exist, the Member is created
                 and added to memberList. Otherwise, a relevant error message is printed to the console and control is
                 returned to the memberMenu.
-
-TO DO: Add input verification and error handling.
 */
-void addMember(array<Member*, MEMBER_ARR_SIZE>& memberList);
+void addMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
 
 /*
 This helper function edits an existing member in memberList using data input by the user.
 Preconditions:  The Member to be edited already exists and is in memberList.
 Postconditions: The Member is updated with new data input by the user, if the input passes validation. Otherwise, a
                 relevant error message is printed to the console and control is returned to memberMenu.
-
-TO DO: Add input verification and error handling.
 */
 void editMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
 
@@ -60,8 +54,6 @@ This helper function removes an existing member from memberList.
 Preconditions:  The Member to be removed exists and is in memberList.
 Postconditions: The Member is removed from memberList and memberList's elements are shifted to the left to replace
                 Member. If the Member does not exist, an error message is printed to the console.
-
-TO DO: Add input verification and error handling.
 */
 void removeMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
 
@@ -73,8 +65,6 @@ Preconditions:  The Member/Observer exists in their respective list.
 Postconditions: If the input is a Member, the Member is removed from memberList and a new Observer is created using the
                 Member's data and added to observerList. Otherwise, the input is an Observer, and they are removed from
                 observerList and a new Member is created using the Observer's data and added to memberList.
-
-TO DO: Add input verification and error handling.
 */
 void toggleObserverStatus(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
 
@@ -84,8 +74,6 @@ user.
 Preconditions:  The Member exists in memberList or observerList. The input lab hours must be a postive value.
 Postconditions: The input lab hours is added to the selected Member's total available lab hours. If the input lab hours
                 are negative or the selected Member doesn't exist, a relevant error message is printed to the console.
-
-TO DO: Add input verification and error handling.
 */
 void addMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
 
@@ -97,8 +85,6 @@ Preconditions:  The Member exists in memberList or observerList. The Lab exists 
 Postconditions: The input lab hours are subtracted from the selected Member's total available lab hours and are added
                 to the selected Lab's total hours. If the input lab hours are negative, or the selected Member or Lab
                 don't exist, a relevant error message is printed to the console.
-
-TO DO: Add input verification and error handling.
 */
 void spendMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
 
@@ -110,8 +96,6 @@ Preconditions:  The Member exists in memberList or observerList. The Lab exists 
 Postconditions: The input lab hours are added to the selected Member's total available lab hours and are subtracted
                 from the selected Lab's total hours. If the input lab hours are negative, or the selected Member or Lab
                 don't exist, a relevant error message is printed to the console.
-
-TO DO: Add input verification and error handling.
 */
 void refundMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
 

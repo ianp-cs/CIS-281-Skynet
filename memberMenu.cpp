@@ -23,36 +23,43 @@ void memberMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LA
 
         cout << endl;
 
-        switch (userInput) {
-        case 1:
-            printMembersList(memberList, observerList);
-            break;
-        case 2:
-            addMember(memberList);
-            break;
-        case 3:
-            editMember(memberList, observerList);
-            break;
-        case 4:
-            removeMember(memberList, observerList);
-            break;
-        case 5:
-            toggleObserverStatus(memberList, observerList);
-            break;
-        case 6:
-            addMemberLabHours(memberList, observerList);
-            break;
-        case 7:
-            spendMemberLabHours(memberList, observerList);
-            break;
-        case 8:
-            refundMemberLabHours(memberList, observerList);
-            break;
-        case 9:
-            validInput = true;
-            cout << "Returning to main menu..." << endl << endl;
-            break;
-        default:
+        if (cin) {
+            switch (userInput) {
+            case 1:
+                printMembersList(memberList, observerList);
+                break;
+            case 2:
+                addMember(memberList, observerList);
+                break;
+            case 3:
+                editMember(memberList, observerList);
+                break;
+            case 4:
+                removeMember(memberList, observerList);
+                break;
+            case 5:
+                toggleObserverStatus(memberList, observerList);
+                break;
+            case 6:
+                addMemberLabHours(memberList, observerList);
+                break;
+            case 7:
+                spendMemberLabHours(memberList, observerList);
+                break;
+            case 8:
+                refundMemberLabHours(memberList, observerList);
+                break;
+            case 9:
+                validInput = true;
+                cout << "Returning to main menu..." << endl << endl;
+                break;
+            default:
+                validInput = false;
+                cout << "Invalid input. Please try again." << endl << endl;
+            }
+        }
+        else {
+            clearBuffer(stdin);
             validInput = false;
             cout << "Invalid input. Please try again." << endl << endl;
         }
@@ -76,8 +83,9 @@ void printMembersList(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observe
     cout << endl;
 }
 
-void addMember(array<Member*, MEMBER_ARR_SIZE>& memberList) {
+void addMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
     string userInput;
+    bool validInput{ false };
     int memberID;
     string name;
     string email;
@@ -87,15 +95,33 @@ void addMember(array<Member*, MEMBER_ARR_SIZE>& memberList) {
 
     clearBuffer(stdin);
 
-    cout << "Adding new Club Member..." << endl;
-    cout << "Enter the Member's ID or enter \"0\" to return: ";
-    getline(cin, userInput);
-    cout << endl;
-    if (stoi(userInput) == 0) {
+    cout << "Adding new Club Member..." << endl << endl;
+
+    while (validInput == false) {
+        cout << "Enter the Member's ID or enter \"0\" to return: ";
+        getline(cin, userInput);
         cout << endl;
-        return;
+
+        try {
+            if (stoi(userInput) == 0) {
+                cout << endl;
+                return;
+            }
+            memberID = stoi(userInput);
+
+            if (checkIDAvailability(memberList, observerList, memberID)) {
+                validInput = true;
+            }
+            else {
+                cout << "Member ID " << memberID << " is already assigned. Please try a different ID." << endl << endl;
+            }
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Member ID must be a number. Please try again." << endl << endl;
+        }
     }
-    memberID = stoi(userInput);
+
+    validInput = false;
 
     cout << "Enter the Member's name: ";
     getline(cin, userInput);
@@ -112,15 +138,44 @@ void addMember(array<Member*, MEMBER_ARR_SIZE>& memberList) {
     cout << endl;
     address = userInput;
 
-    cout << "Enter the Member's phone number (without special characters or spaces): ";
-    getline(cin, userInput);
-    cout << endl;
-    phoneNum = userInput;
+    while (validInput == false) {
+        cout << "Enter the Member's phone number (digits only, include area code): ";
+        getline(cin, userInput);
+        cout << endl;
 
-    cout << "Enter the Member's available lab hours: ";
-    getline(cin, userInput);
-    cout << endl;
-    labHours = stod(userInput);
+        try {
+            phoneNum = userInput;
+            stod(userInput);    // Test that the input is a number, no special characters or spaces
+
+            if (userInput.length() == 10) {
+                validInput = true;
+            }
+            else {
+                cout << "Invalid input. Phone number must be 10 digits, include the area code. Please try again" << 
+                    endl << endl;
+            }
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Phone number must be a number with no special characters or spaces. Please try "
+                "again." << endl << endl;
+        }
+    }
+
+    validInput = true;
+
+    while (validInput == false) {
+        cout << "Enter the Member's available lab hours: ";
+        getline(cin, userInput);
+        cout << endl;
+
+        try {
+            labHours = stod(userInput);
+            validInput = true;
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Member's lab hours must be a number. Please try again." << endl << endl;
+        }
+    }
 
     memberList[memberListSize] = new Member(memberID, name, email, address, phoneNum, labHours);
     memberListSize++;
@@ -130,11 +185,29 @@ void editMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LA
     int memberID;
     Member* target{ nullptr };
     string userInput;
+    bool validInput{ false };
 
-    cout << "Enter the Member's ID to edit or enter \"0\" to return: ";
-    cin >> memberID;
+    clearBuffer(stdin);
 
-    cout << endl;
+    while (validInput == false) {
+        cout << "Enter the Member's ID to edit or enter \"0\" to return: ";
+        getline(cin, userInput);
+        cout << endl;
+
+        try {
+            if (stoi(userInput) == 0) {
+                cout << endl;
+                return;
+            }
+            memberID = stoi(userInput);
+            validInput = true;
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Member ID must be a number. Please try again." << endl << endl;
+        }
+    }
+
+    validInput = false;
 
     if (memberID == 0) {
         return;
@@ -157,16 +230,34 @@ void editMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LA
     }
 
     if (target != nullptr) {
-        clearBuffer(stdin);
+        cout << "For the following prompts, enter a new value if the data needs to be changed, otherwise hit ENTER to " 
+            "skip." << endl << endl;
 
-        cout << "For the following prompts, enter a new value if the data needs to be changed, otherwise hit ENTER to skip." << endl << endl;
-
-        cout << "Enter the Member's ID: ";
-        getline(cin, userInput);
-        cout << endl;
-        if (userInput != "") {
-            target->setID(stoi(userInput));
+        while (validInput == false) {
+            cout << "Enter the Member's ID: ";
+            getline(cin, userInput);
+            cout << endl;
+            if (userInput != "") {
+                try {
+                    if (checkIDAvailability(memberList, observerList, stoi(userInput))) {
+                        target->setID(stoi(userInput));
+                        validInput = true;
+                    }
+                    else {
+                        cout << "Member ID " << stoi(userInput) << " is already assigned. Please try a different ID." 
+                            << endl << endl;
+                    }
+                }
+                catch (const exception& e) {
+                    cout << "Invalid input. Member ID must be a number. Please try again." << endl << endl;
+                }
+            }
+            else {
+                validInput = true;
+            }
         }
+
+        validInput = false;
 
         cout << "Enter the Member's name: ";
         getline(cin, userInput);
@@ -189,18 +280,53 @@ void editMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LA
             target->setAddress(userInput);
         }
 
-        cout << "Enter the Member's phone number (without special characters or spaces): ";
-        getline(cin, userInput);
-        cout << endl;
-        if (userInput != "") {
-            target->setPhoneNum(userInput);
+        while (validInput == false) {
+            cout << "Enter the Member's phone number (digits only, include area code): ";
+            getline(cin, userInput);
+            cout << endl;
+
+            if (userInput != "") {
+                try {
+                    stod(userInput);    // Test that the input is a number, no special characters or spaces
+
+                    if (userInput.length() == 10) {
+                        target->setPhoneNum(userInput);
+                        validInput = true;
+                    }
+                    else {
+                        cout << "Invalid input. Phone number must be 10 digits, include the area code. Please try again" <<
+                            endl << endl;
+                    }
+                }
+                catch (const exception& e) {
+                    cout << "Invalid input. Phone number must be a number with no special characters or spaces. Please try "
+                        "again." << endl << endl;
+                }
+            }
+            else {
+                validInput = true;
+            }
         }
 
-        cout << "Enter the Member's available lab hours: ";
-        getline(cin, userInput);
-        cout << endl;
-        if (userInput != "") {
-            target->setLabHours(stod(userInput));
+        validInput = false;
+
+        while (validInput == false) {
+            if (userInput != "") {
+                cout << "Enter the Member's available lab hours: ";
+                getline(cin, userInput);
+                cout << endl;
+
+                try {
+                    target->setLabHours(stod(userInput));
+                    validInput = true;
+                }
+                catch (const exception& e) {
+                    cout << "Invalid input. Member's lab hours must be a number. Please try again." << endl << endl;
+                }
+            }
+            else {
+                validInput = true;
+            }
         }
     }
     else {
@@ -209,10 +335,29 @@ void editMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LA
 }
 
 void removeMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
+    string userInput;
     int memberID;
+    bool validInput{ false };
 
-    cout << "Enter the ID of the Member to remove them or enter \"0\" to return: ";
-    cin >> memberID;
+    clearBuffer(stdin);
+
+    while (validInput == false) {
+        cout << "Enter the ID of the Member to remove them or enter \"0\" to return: ";
+        getline(cin, userInput);
+        cout << endl;
+
+        try {
+            if (stoi(userInput) == 0) {
+                cout << endl;
+                return;
+            }
+            memberID = stoi(userInput);
+            validInput = true;
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Member ID must be a number. Please try again." << endl << endl;
+        }
+    }
 
     cout << endl;
 
@@ -244,15 +389,32 @@ void removeMember(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, 
 }
 
 void toggleObserverStatus(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
+    string userInput;
     int memberID;
+    bool validInput{ false };
 
     cout << "Entering the ID of a Member will promote them to Observer, if they are not already one. Otherwise, if " <<
         "the ID is of an Observer, they will be demoted to Member. Enter \"0\" to return to the previous menu." << endl << endl;
 
-    cout << "Enter a Member's ID to promote/demote them: ";
-    cin >> memberID;
+    clearBuffer(stdin);
 
-    cout << endl;
+    while (validInput == false) {
+        cout << "Enter a Member's ID to promote/demote them: ";
+        getline(cin, userInput);
+        cout << endl;
+
+        try {
+            if (stoi(userInput) == 0) {
+                cout << endl;
+                return;
+            }
+            memberID = stoi(userInput);
+            validInput = true;
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Member ID must be a number. Please try again." << endl << endl;
+        }
+    }
 
     if (memberID == 0) {
         return;
@@ -275,10 +437,12 @@ void toggleObserverStatus(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Obs
                 memberList[memberListSize] = new Member(*observerList[i]);
                 memberListSize++;
 
-                observerList[i]->getAssignedLab()->setObserver(nullptr);
+                if (observerList[i]->getAssignedLab() != nullptr) {
+                    observerList[i]->getAssignedLab()->setObserver(nullptr);
+                }
                 shiftObserverListElements(observerList, i);
 
-                cout << "Member " << memberID << " successfully demoted toMember." << endl << endl;
+                cout << "Member " << memberID << " successfully demoted to Member." << endl << endl;
                 return;
             }
         }
@@ -288,14 +452,33 @@ void toggleObserverStatus(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Obs
 }
 
 void addMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
+    string userInput;
     int memberID;
+    bool validInput{ false };
     Member* target{ nullptr };
     double labHours;
 
-    cout << "Enter a Member's ID to add Lab hours or enter \"0\" to return: ";
-    cin >> memberID;
+    clearBuffer(stdin);
 
-    cout << endl;
+    while (validInput == false) {
+        cout << "Enter a Member's ID to add Lab hours or enter \"0\" to return: ";
+        getline(cin, userInput);
+        cout << endl;
+
+        try {
+            if (stoi(userInput) == 0) {
+                cout << endl;
+                return;
+            }
+            memberID = stoi(userInput);
+            validInput = true;
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Member ID must be a number. Please try again." << endl << endl;
+        }
+    }
+
+    validInput = false;
 
     if (memberID == 0) {
         return;
@@ -318,14 +501,29 @@ void addMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observ
     }
 
     if (target != nullptr) {
-        cout << "Enter the number of hours to add to Member " << memberID << " total Lab hours: ";
-        cin >> labHours;
+        while (validInput == false) {
+            cout << "Enter the number of hours to add to Member " << memberID << " total Lab hours: ";
+            getline(cin, userInput);
+            cout << endl;
 
-        cout << endl;
+            try {
+                labHours = stod(userInput);
+
+                if (labHours >= 0) {
+                    validInput = true;
+                }
+                else {
+                    cout << "Invalid input. Lab hours must be a positive value. Please try again." << endl << endl;
+                }
+            }
+            catch (const exception& e) {
+                cout << "Invalid input. Member's lab hours must be a number. Please try again." << endl << endl;
+            }
+        }
 
         target->refundLabHours(labHours);
         cout << fixed << setprecision(2);
-        cout << "Successfully added " << labHours << " hours to Member " << memberID << "\'s balance." << endl << endl;
+        cout << "Successfully added " << labHours << " hours to Member " << memberID << "'s balance." << endl << endl;
     }
 
     cout << "There is no Member with ID \"" << memberID << "\". Returning to previous menu..." << endl << endl;
@@ -333,15 +531,33 @@ void addMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observ
 
 void spendMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
     int memberID, labID;
+    bool validInput{ false };
     Member* memberTarget{ nullptr };
     Lab* labTarget{ nullptr };
     string userInput;
     double labHours;
 
-    cout << "Enter a Member's ID to spend Lab hours or enter \"0\" to return: ";
-    cin >> memberID;
+    clearBuffer(stdin);
 
-    cout << endl;
+    while (validInput == false) {
+        cout << "Enter a Member's ID to spend Lab hours or enter \"0\" to return: ";
+        getline(cin, userInput);
+        cout << endl;
+
+        try {
+            if (stoi(userInput) == 0) {
+                cout << endl;
+                return;
+            }
+            memberID = stoi(userInput);
+            validInput = true;
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Member ID must be a number. Please try again." << endl << endl;
+        }
+    }
+
+    validInput = false;
 
     if (memberID == 0) {
         return;
@@ -368,10 +584,25 @@ void spendMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Obse
         return;
     }
 
-    cout << "Enter the ID of the Lab where the Lab hours are spent: ";
-    cin >> labID;
+    while (validInput == false) {
+        cout << "Enter the ID of the Lab where the Lab hours are spent: ";
+        getline(cin, userInput);
+        cout << endl;
 
-    cout << endl;
+        try {
+            if (stoi(userInput) == 0) {
+                cout << endl;
+                return;
+            }
+            labID = stoi(userInput);
+            validInput = true;
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Lab ID must be a number. Please try again." << endl << endl;
+        }
+    }
+
+    validInput = false;
 
     for (int i{ 0 }; i < memberTarget->getLabsListSize(); i++) {
         if (memberTarget->getLabsList()[i]->getID() == labID) {
@@ -385,28 +616,65 @@ void spendMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Obse
         return;
     }
 
-    cout << "Enter the number of hours to be spent by Member " << memberID << " for Lab " << labID << ": ";
-    cin >> labHours;
+    while (validInput == false) {
+        cout << "Member " << memberID << "'s current balance: " << memberTarget->getLabHours() << " hours." << endl;
+        cout << "Lab " << labID << "'s current total: " << labTarget->getTotalHours() << " hours." << endl << endl;
+        cout << "Enter the number of hours to be spent by Member " << memberID << " for Lab " << labID << ": ";
+        getline(cin, userInput);
+        cout << endl;
 
-    cout << endl;
+        try {
+            labHours = stod(userInput);
+
+            if (labHours >= 0) {
+                validInput = true;
+            }
+            else {
+                cout << "Invalid input. Lab hours must be a positive value. Please try again." << endl << endl;
+            }
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Member's lab hours must be a number. Please try again." << endl << endl;
+        }
+    }
 
     memberTarget->spendLabHours(labHours);
     labTarget->addHours(labHours);
-    cout << "Successfully spent " << labHours << " of Member " << memberID << "\'s Lab hours for Lab " << labID << "."
+    cout << "Successfully spent " << labHours << " of Member " << memberID << "'s Lab hours for Lab " << labID << "."
         << endl << endl;
+    cout << "Member " << memberID << "'s balance is now " << memberTarget->getLabHours() << " hours." << endl;
+    cout << "Lab " << labID << "'s total hours is now " << labTarget->getTotalHours() << " hours." << endl << endl;
 }
 
 void refundMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
     int memberID, labID;
+    bool validInput{ false };
     Member* memberTarget{ nullptr };
     Lab* labTarget{ nullptr };
     string userInput;
     double labHours;
 
-    cout << "Enter a Member's ID to refund Lab hours or enter \"0\" to return: ";
-    cin >> memberID;
+    clearBuffer(stdin);
 
-    cout << endl;
+    while (validInput == false) {
+        cout << "Enter a Member's ID to refund Lab hours or enter \"0\" to return: ";
+        getline(cin, userInput);
+        cout << endl;
+
+        try {
+            if (stoi(userInput) == 0) {
+                cout << endl;
+                return;
+            }
+            memberID = stoi(userInput);
+            validInput = true;
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Member ID must be a number. Please try again." << endl << endl;
+        }
+    }
+
+    validInput = false;
 
     if (memberID == 0) {
         return;
@@ -433,10 +701,25 @@ void refundMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Obs
         return;
     }
 
-    cout << "Enter the ID of the Lab where the Lab hours are refunded from: ";
-    cin >> labID;
+    while (validInput == false) {
+        cout << "Enter the ID of the Lab where the Lab hours are refunded from: ";
+        getline(cin, userInput);
+        cout << endl;
 
-    cout << endl;
+        try {
+            if (stoi(userInput) == 0) {
+                cout << endl;
+                return;
+            }
+            labID = stoi(userInput);
+            validInput = true;
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Lab ID must be a number. Please try again." << endl << endl;
+        }
+    }
+
+    validInput = false;
 
     for (int i{ 0 }; i < memberTarget->getLabsListSize(); i++) {
         if (memberTarget->getLabsList()[i]->getID() == labID) {
@@ -450,13 +733,32 @@ void refundMemberLabHours(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Obs
         return;
     }
 
-    cout << "Enter the number of hours to be refunded to Member " << memberID << " from Lab " << labID << ": ";
-    cin >> labHours;
+    while (validInput == false) {
+        cout << "Member " << memberID << "'s current balance: " << memberTarget->getLabHours() << " hours." << endl;
+        cout << "Lab " << labID << "'s current total: " << labTarget->getTotalHours() << " hours." << endl << endl;
+        cout << "Enter the number of hours to be refunded to Member " << memberID << " from Lab " << labID << ": ";
+        getline(cin, userInput);
+        cout << endl;
 
-    cout << endl;
+        try {
+            labHours = stod(userInput);
+
+            if (labHours >= 0) {
+                validInput = true;
+            }
+            else {
+                cout << "Invalid input. Lab hours must be a positive value. Please try again." << endl << endl;
+            }
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Member's lab hours must be a number. Please try again." << endl << endl;
+        }
+    }
 
     memberTarget->refundLabHours(labHours);
     labTarget->refundHours(labHours);
-    cout << "Successfully refunded " << labHours << " hours to Member " << memberID << "\'s balance from Lab " <<
+    cout << "Successfully refunded " << labHours << " hours to Member " << memberID << "'s balance from Lab " <<
         labID << "." << endl << endl;
+    cout << "Member " << memberID << "'s balance is now " << memberTarget->getLabHours() << " hours." << endl;
+    cout << "Lab " << labID << "'s total hours is now " << labTarget->getTotalHours() << " hours." << endl << endl;
 }

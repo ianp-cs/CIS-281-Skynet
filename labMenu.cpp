@@ -22,36 +22,43 @@ void labMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_A
 
         cout << endl;
 
-        switch (userInput) {
-        case 1:
-            printLabList(labList);
-            break;
-        case 2:
-            addLab(labList);
-            break;
-        case 3:
-            editLab(labList);
-            break;
-        case 4:
-            removeLab(labList);
-            break;
-        case 5:
-            assignObserverToLab(observerList, labList);
-            break;
-        case 6:
-            unassignObserver(observerList);
-            break;
-        case 7:
-            assignMemberToLab(memberList, observerList, labList);
-            break;
-        case 8:
-            unassignMemberFromLab(memberList, observerList, labList);
-            break;
-        case 9:
-            validInput = true;
-            cout << "Returning to main menu..." << endl << endl;
-            break;
-        default:
+        if (cin) {
+            switch (userInput) {
+            case 1:
+                printLabList(labList);
+                break;
+            case 2:
+                addLab(labList);
+                break;
+            case 3:
+                editLab(labList);
+                break;
+            case 4:
+                removeLab(labList);
+                break;
+            case 5:
+                assignObserverToLab(observerList, labList);
+                break;
+            case 6:
+                unassignObserver(observerList);
+                break;
+            case 7:
+                assignMemberToLab(memberList, observerList, labList);
+                break;
+            case 8:
+                unassignMemberFromLab(memberList, observerList, labList);
+                break;
+            case 9:
+                validInput = true;
+                cout << "Returning to main menu..." << endl << endl;
+                break;
+            default:
+                validInput = false;
+                cout << "Invalid input. Please try again." << endl << endl;
+            }
+        }
+        else {
+            clearBuffer(stdin);
             validInput = false;
             cout << "Invalid input. Please try again." << endl << endl;
         }
@@ -71,20 +78,37 @@ void printLabList(array<Lab*, LAB_ARR_SIZE>& labList) {
 
 void addLab(array<Lab*, LAB_ARR_SIZE>& labList) {
     string userInput;
+    bool validInput{ false };
     int labID;
     string type;
 
     clearBuffer(stdin);
 
-    cout << "Adding new Lab..." << endl;
-    cout << "Enter the Lab's ID or enter \"0\" to return: ";
-    getline(cin, userInput);
-    cout << endl;
-    if (stoi(userInput) == 0) {
+    cout << "Adding new Lab..." << endl << endl;
+
+    while (validInput == false) {
+        cout << "Enter the Lab's ID or enter \"0\" to return: ";
+        getline(cin, userInput);
         cout << endl;
-        return;
+
+        try {
+            if (stoi(userInput) == 0) {
+                cout << endl;
+                return;
+            }
+            labID = stoi(userInput);
+
+            if (checkIDAvailability(labList, labID)) {
+                validInput = true;
+            }
+            else {
+                cout << "Lab ID " << labID << " is already assigned. Please try a different ID." << endl << endl;
+            }
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Lab ID must be a number. Please try again." << endl << endl;
+        }
     }
-    labID = stoi(userInput);
 
     cout << "Enter the Lab's type: ";
     getline(cin, userInput);
@@ -97,13 +121,31 @@ void addLab(array<Lab*, LAB_ARR_SIZE>& labList) {
 
 void editLab(array<Lab*, LAB_ARR_SIZE>& labList) {
     int labID;
+    bool validInput{ false };
     Lab* target{ nullptr };
     string userInput;
 
-    cout << "Enter the Lab's ID to edit or enter \"0\" to return: ";
-    cin >> labID;
+    clearBuffer(stdin);
 
-    cout << endl;
+    while (validInput == false) {
+        cout << "Enter the Lab's ID to edit or enter \"0\" to return: ";
+        getline(cin, userInput);
+        cout << endl;
+
+        try {
+            if (stoi(userInput) == 0) {
+                cout << endl;
+                return;
+            }
+            labID = stoi(userInput);
+            validInput = true;
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Lab ID must be a number. Please try again." << endl << endl;
+        }
+    }
+
+    validInput = false;
 
     if (labID == 0) {
         return;
@@ -117,17 +159,36 @@ void editLab(array<Lab*, LAB_ARR_SIZE>& labList) {
     }
 
     if (target != nullptr) {
-        clearBuffer(stdin);
 
         cout << "For the following prompts, enter a new value if the data needs to be changed, otherwise hit ENTER to "
             "skip." << endl << endl;
 
-        cout << "Enter the Lab's ID: ";
-        getline(cin, userInput);
-        cout << endl;
-        if (userInput != "") {
-            target->setID(stoi(userInput));
+        while (validInput == false) {
+            cout << "Enter the Lab's ID: ";
+            getline(cin, userInput);
+            cout << endl;
+
+            if (userInput != "") {
+                try {
+                    if (checkIDAvailability(labList, stoi(userInput))) {
+                        target->setID(stoi(userInput));
+                        validInput = true;
+                    }
+                    else {
+                        cout << "Lab ID " << stoi(userInput) << " is already assigned. Please try a different ID."
+                            << endl << endl;
+                    }
+                }
+                catch (const exception& e) {
+                    cout << "Invalid input. Lab ID must be a number. Please try again." << endl << endl;
+                }
+            }
+            else {
+                validInput = true;
+            }
         }
+
+        validInput = false;
 
         cout << "Enter the Lab's type: ";
         getline(cin, userInput);
@@ -136,11 +197,28 @@ void editLab(array<Lab*, LAB_ARR_SIZE>& labList) {
             target->setType(userInput);
         }
 
-        cout << "Enter the Lab's total hours: ";
-        getline(cin, userInput);
-        cout << endl;
-        if (userInput != "") {
-            target->setTotalHours(stod(userInput));
+        while (validInput == false) {
+            cout << "Enter the Lab's total hours: ";
+            getline(cin, userInput);
+            cout << endl;
+
+            if (userInput != "") {
+                try {
+                    if (stod(userInput) >= 0) {
+                        target->setTotalHours(stod(userInput));
+                        validInput = true;
+                    }
+                    else {
+                        cout << "Invalid input. Lab's total hours must be positive. Please try again." << endl << endl;
+                    }
+                }
+                catch (const exception& e) {
+                    cout << "Invalid input. Lab's total hours must be a number. Please try again." << endl << endl;
+                }
+            }
+            else {
+                validInput = true;
+            }
         }
     }
     else {
@@ -150,11 +228,28 @@ void editLab(array<Lab*, LAB_ARR_SIZE>& labList) {
 
 void removeLab(array<Lab*, LAB_ARR_SIZE>& labList) {
     int labID;
+    bool validInput{ false };
+    string userInput;
 
-    cout << "Enter the ID of the Lab to remove them or enter \"0\" to return: ";
-    cin >> labID;
+    clearBuffer(stdin);
 
-    cout << endl;
+    while (validInput == false) {
+        cout << "Enter the ID of the Lab to remove them or enter \"0\" to return: ";
+        getline(cin, userInput);
+        cout << endl;
+
+        try {
+            if (stoi(userInput) == 0) {
+                cout << endl;
+                return;
+            }
+            labID = stoi(userInput);
+            validInput = true;
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Lab ID must be a number. Please try again." << endl << endl;
+        }
+    }
 
     if (labID == 0) {
         return;
@@ -174,13 +269,32 @@ void removeLab(array<Lab*, LAB_ARR_SIZE>& labList) {
 
 void assignObserverToLab(array<Observer*, LAB_ARR_SIZE>& observerList, array<Lab*, LAB_ARR_SIZE>& labList) {
     int observerID, labID;
+    bool validInput{ false };
+    string userInput;
     Observer* observerTarget = nullptr;
     Lab* labTarget = nullptr;
 
-    cout << "Enter the ID of the Observer to be assigned or enter \"0\" to return: ";
-    cin >> observerID;
+    clearBuffer(stdin);
 
-    cout << endl;
+    while (validInput == false) {
+        cout << "Enter the ID of the Observer to be assigned or enter \"0\" to return: ";
+        getline(cin, userInput);
+        cout << endl;
+
+        try {
+            if (stoi(userInput) == 0) {
+                cout << endl;
+                return;
+            }
+            observerID = stoi(userInput);
+            validInput = true;
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Observer ID must be a number. Please try again." << endl << endl;
+        }
+    }
+
+    validInput = false;
 
     if (observerID == 0) {
         return;
@@ -200,10 +314,23 @@ void assignObserverToLab(array<Observer*, LAB_ARR_SIZE>& observerList, array<Lab
         }
     }
 
-    cout << "Enter the ID of the Lab that Observer " << observerID << " should be assigned to: ";
-    cin >> labID;
+    while (validInput == false) {
+        cout << "Enter the ID of the Lab that Observer " << observerID << " should be assigned to: ";
+        getline(cin, userInput);
+        cout << endl;
 
-    cout << endl;
+        try {
+            if (stoi(userInput) == 0) {
+                cout << endl;
+                return;
+            }
+            labID = stoi(userInput);
+            validInput = true;
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Lab ID must be a number. Please try again." << endl << endl;
+        }
+    }
 
     for (int i{ 0 }; i < labListSize; i++) {
         if (labList[i]->getID() == labID) {
@@ -236,12 +363,31 @@ void assignObserverToLab(array<Observer*, LAB_ARR_SIZE>& observerList, array<Lab
 
 void unassignObserver(array<Observer*, LAB_ARR_SIZE>& observerList) {
     int observerID;
+    string userInput;
+    bool validInput{ false };
     Observer* observerTarget = nullptr;
 
-    cout << "Enter the ID of the Observer to be unassigned or enter \"0\" to return: ";
-    cin >> observerID;
+    clearBuffer(stdin);
 
-    cout << endl;
+    while (validInput == false) {
+        cout << "Enter the ID of the Observer to be unassigned or enter \"0\" to return: ";
+        getline(cin, userInput);
+        cout << endl;
+
+        try {
+            if (stoi(userInput) == 0) {
+                cout << endl;
+                return;
+            }
+            observerID = stoi(userInput);
+            validInput = true;
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Observer ID must be a number. Please try again." << endl << endl;
+        }
+    }
+
+    validInput = false;
 
     if (observerID == 0) {
         return;
@@ -275,13 +421,32 @@ void assignMemberToLab(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observ
     array<Lab*, LAB_ARR_SIZE>& labList) {
 
     int memberID, labID;
+    string userInput;
+    bool validInput{ false };
     Member* memberTarget = nullptr;
     Lab* labTarget = nullptr;
 
-    cout << "Enter the ID of the Member to be assigned or enter \"0\" to return: ";
-    cin >> memberID;
+    clearBuffer(stdin);
 
-    cout << endl;
+    while (validInput == false) {
+        cout << "Enter the ID of the Member to be assigned or enter \"0\" to return: ";
+        getline(cin, userInput);
+        cout << endl;
+
+        try {
+            if (stoi(userInput) == 0) {
+                cout << endl;
+                return;
+            }
+            memberID = stoi(userInput);
+            validInput = true;
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Member ID must be a number. Please try again." << endl << endl;
+        }
+    }
+
+    validInput = false;
 
     if (memberID == 0) {
         return;
@@ -309,10 +474,23 @@ void assignMemberToLab(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observ
         }
     }
 
-    cout << "Enter the ID of the Lab that Member " << memberID << " should be assigned to: ";
-    cin >> labID;
+    while (validInput == false) {
+        cout << "Enter the ID of the Lab that Member " << memberID << " should be assigned to: ";
+        getline(cin, userInput);
+        cout << endl;
 
-    cout << endl;
+        try {
+            if (stoi(userInput) == 0) {
+                cout << endl;
+                return;
+            }
+            labID = stoi(userInput);
+            validInput = true;
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Lab ID must be a number. Please try again." << endl << endl;
+        }
+    }
 
     for (int i{ 0 }; i < labListSize; i++) {
         if (labList[i]->getID() == labID) {
@@ -339,13 +517,32 @@ void unassignMemberFromLab(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Ob
     array<Lab*, LAB_ARR_SIZE>& labList) {
 
     int memberID, labID;
+    string userInput;
+    bool validInput{ false };
     Member* memberTarget = nullptr;
     Lab* labTarget = nullptr;
 
-    cout << "Enter the ID of the Member to be assigned or enter \"0\" to return: ";
-    cin >> memberID;
+    clearBuffer(stdin);
 
-    cout << endl;
+    while (validInput == false) {
+        cout << "Enter the ID of the Member to be assigned or enter \"0\" to return: ";
+        getline(cin, userInput);
+        cout << endl;
+
+        try {
+            if (stoi(userInput) == 0) {
+                cout << endl;
+                return;
+            }
+            memberID = stoi(userInput);
+            validInput = true;
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Member ID must be a number. Please try again." << endl << endl;
+        }
+    }
+
+    validInput = false;
 
     if (memberID == 0) {
         return;
@@ -373,10 +570,23 @@ void unassignMemberFromLab(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Ob
         }
     }
 
-    cout << "Enter the ID of the Lab that Member " << memberID << " should be removed from: ";
-    cin >> labID;
+    while (validInput == false) {
+        cout << "Enter the ID of the Lab that Member " << memberID << " should be removed from: ";
+        getline(cin, userInput);
+        cout << endl;
 
-    cout << endl;
+        try {
+            if (stoi(userInput) == 0) {
+                cout << endl;
+                return;
+            }
+            labID = stoi(userInput);
+            validInput = true;
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Lab ID must be a number. Please try again." << endl << endl;
+        }
+    }
 
     for (int i{ 0 }; i < labListSize; i++) {
         if (labList[i]->getID() == labID) {

@@ -21,8 +21,6 @@ This function displays the Pull Reports Menu and accepts and verifies commands f
 helper functions or return to the main menu.
 Preconditions:  memberList, observerList, and labList are initialized with data.
 Postconditions: The command input by the user is processed.
-
-TO DO: Add input verification and error handling.
 */
 void reportMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList,
     array<Lab*, LAB_ARR_SIZE>& labList);
@@ -31,8 +29,6 @@ void reportMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LA
 This helper function takes a user input Member ID and uses it to print the Member's Report to the console.
 Preconditions:  The input Member exists in memberList or observerList.
 Postconditions: Every Member's report is printed to the console.
-
-TO DO: Add input verification and error handling.
 */
 void pullMemberReport(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList);
 
@@ -40,8 +36,6 @@ void pullMemberReport(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observe
 This helper function takes a user input Lab ID and uses it to print the Lab's Report to the console.
 Preconditions:  The input Lab exists in labList.
 Postconditions: Every Lab's report is printed to the console.
-
-TO DO: Add input verification and error handling.
 */
 void pullLabReport(array<Lab*, LAB_ARR_SIZE>& labList);
 

@@ -2,6 +2,7 @@
 
 void clearBuffer(FILE* fp) {
     char ch;
+    cin.clear();
     while ((ch = getc(fp)) != '\n' && ch != EOF);
 }
 
@@ -93,4 +94,32 @@ void detachMember(Member* member) {
 void attachObserverToLab(Observer* observer, Lab* lab) {
     observer->setAssignedLab(lab);
     lab->setObserver(observer);
+}
+
+bool checkIDAvailability(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList, 
+    const int& memberID) {
+
+    for (int i{ 0 }; i < memberListSize; i++) {
+        if (memberList[i]->getID() == memberID) {
+            return false;
+        }
+    }
+
+    for (int i{ 0 }; i < observerListSize; i++) {
+        if (observerList[i]->getID() == memberID) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool checkIDAvailability(array<Lab*, LAB_ARR_SIZE>& labList, const int& labID) {
+    for (int i{ 0 }; i < labListSize; i++) {
+        if (labList[i]->getID() == labID) {
+            return false;
+        }
+    }
+
+    return true;
 }

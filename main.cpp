@@ -66,28 +66,35 @@ int main() {
 
         cout << endl;
 
-        switch (userInput) {
-        case 1:
-            memberMenu(memberList, observerList);
-            break;
-        case 2:
-            labMenu(memberList, observerList, labList);
-            break;
-        case 3:
-            reportMenu(memberList, observerList, labList);
-            break;
-        case 4:
-            validInput = true;
-            cout << "Closing the program..." << endl;
-            writeToMemberFile(memberList);
-            writeToObserverFile(observerList);
-            writeToLabFile(labList);
-            writeToListLinkFile(labList);
-            deallocateLists(memberList, observerList, labList);
-            break;
-        default:
+        if (cin) {
+            switch (userInput) {
+            case 1:
+                memberMenu(memberList, observerList);
+                break;
+            case 2:
+                labMenu(memberList, observerList, labList);
+                break;
+            case 3:
+                reportMenu(memberList, observerList, labList);
+                break;
+            case 4:
+                validInput = true;
+                cout << "Closing the program..." << endl;
+                writeToMemberFile(memberList);
+                writeToObserverFile(observerList);
+                writeToLabFile(labList);
+                writeToListLinkFile(labList);
+                deallocateLists(memberList, observerList, labList);
+                break;
+            default:
+                validInput = false;
+                cout << "Invalid input. Please try again." << endl << endl;
+            }
+        }
+        else {
+            clearBuffer(stdin);
             validInput = false;
-            cout << "Invalid input. Please try again." << endl;
+            cout << "Invalid input. Please try again." << endl << endl;
         }
     }
 }
@@ -111,19 +118,19 @@ void initializeLists(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer
 
    // Verify files are open
     if (!memberFile.is_open()) {
-        cout << "Failed to find or open Member file. Closing program..." << endl << endl;
+        cout << "Failed to find or open Member file. Closing program..." << endl;
         exit(1);
     }
     if (!observerFile.is_open()) {
-        cout << "Failed to find or open Observer file. Closing program..." << endl << endl;
+        cout << "Failed to find or open Observer file. Closing program..." << endl;
         exit(1);
     }
     if (!labFile.is_open()) {
-        cout << "Failed to find or open Lab file. Closing program..." << endl << endl;
+        cout << "Failed to find or open Lab file. Closing program..." << endl;
         exit(1);
     }
     if (!listLinkFile.is_open()) {
-        cout << "Failed to find or open list link file. Closing program..." << endl << endl;
+        cout << "Failed to find or open list link file. Closing program..." << endl;
         exit(1);
     }
 
@@ -226,6 +233,7 @@ void userLogin() {
 
     for (int i{ 0 }; i < count; i++) {
         delete adminList[i];
+        adminList[i] = nullptr;
     }
     adminFile.close();
 }
@@ -238,19 +246,25 @@ Postconditions: memberList has been initialized.
 void readMemberFile(array<Member*, MEMBER_ARR_SIZE>& memberList, ifstream& memberFile) {
     string line;
 
-    while (getline(memberFile, line) && memberListSize < MEMBER_ARR_SIZE) {
-        string id, name, email, address, phone, hours;
+    try {
+        while (getline(memberFile, line) && memberListSize < MEMBER_ARR_SIZE) {
+            string id, name, email, address, phone, hours;
 
-        istringstream iss(line);
-        getline(iss, id, '~');
-        getline(iss, name, '~');
-        getline(iss, email, '~');
-        getline(iss, address, '~');
-        getline(iss, phone, '~');
-        getline(iss, hours, '~');
+            istringstream iss(line);
+            getline(iss, id, '~');
+            getline(iss, name, '~');
+            getline(iss, email, '~');
+            getline(iss, address, '~');
+            getline(iss, phone, '~');
+            getline(iss, hours, '~');
 
-        memberList[memberListSize] = new Member(stoi(id), name, email, address, phone, stod(hours));
-        memberListSize++;
+            memberList[memberListSize] = new Member(stoi(id), name, email, address, phone, stod(hours));
+            memberListSize++;
+        }
+    }
+    catch (const exception& e) {
+        cout << "There was an error reading data from " << MEMBER_FILE << ". Please verify the integrity of the file. "
+            "Closing program..." << endl << endl;
     }
 }
 
@@ -263,18 +277,24 @@ Postconditions: observerList has been initialized.
 void readObserverFile(array<Observer*, LAB_ARR_SIZE>& observerList, ifstream& observerFile) {
     string line, id, name, email, address, phone, hours;
     
-    while (getline(observerFile, line) && observerListSize < LAB_ARR_SIZE) {
-        istringstream iss(line);
+    try {
+        while (getline(observerFile, line) && observerListSize < LAB_ARR_SIZE) {
+            istringstream iss(line);
 
-        getline(iss, id, '~');
-        getline(iss, name, '~');
-        getline(iss, email, '~');
-        getline(iss, address, '~');
-        getline(iss, phone, '~');
-        getline(iss, hours, '~');
+            getline(iss, id, '~');
+            getline(iss, name, '~');
+            getline(iss, email, '~');
+            getline(iss, address, '~');
+            getline(iss, phone, '~');
+            getline(iss, hours, '~');
 
-        observerList[observerListSize] = new Observer(stoi(id), name, email, address, phone, stod(hours));
-        observerListSize++;
+            observerList[observerListSize] = new Observer(stoi(id), name, email, address, phone, stod(hours));
+            observerListSize++;
+        }
+    }
+    catch (const exception& e) {
+        cout << "There was an error reading data from " << OBSERVER_FILE << ". Please verify the integrity of the "
+            "file. Closing program..." << endl << endl;
     }
 }
 
@@ -286,15 +306,21 @@ Postconditions: labList has been initialized.
 void readLabFile(array<Lab*, LAB_ARR_SIZE>& labList, ifstream& labFile) {
     string line, id, type, hours;
     
-    while (getline(labFile, line) && labListSize < LAB_ARR_SIZE) {
-        istringstream iss(line);
+    try {
+        while (getline(labFile, line) && labListSize < LAB_ARR_SIZE) {
+            istringstream iss(line);
 
-        getline(iss, id, '~');
-        getline(iss, type, '~');
-        getline(iss, hours, '~');
+            getline(iss, id, '~');
+            getline(iss, type, '~');
+            getline(iss, hours, '~');
 
-        labList[labListSize] = new Lab(stoi(id), type, stod(hours), nullptr);
-        labListSize++;
+            labList[labListSize] = new Lab(stoi(id), type, stod(hours), nullptr);
+            labListSize++;
+        }
+    }
+    catch (const exception& e) {
+        cout << "There was an error reading data from " << LAB_FILE << ". Please verify the integrity of the file. "
+            "Closing program..." << endl << endl;
     }
 }
 
@@ -311,37 +337,43 @@ void readListLinkFile(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observe
     string line, labID, observerID, memberID;
     int count{ 0 };
 
-    while (getline(listLinkFile, line) && count < labListSize) {
-        Observer* observerTarget = nullptr;
-        Member* memberTarget = nullptr;
-        istringstream iss(line);
+    try {
+        while (getline(listLinkFile, line) && count < labListSize) {
+            Observer* observerTarget = nullptr;
+            Member* memberTarget = nullptr;
+            istringstream iss(line);
 
-        getline(iss, labID, '~');
-        getline(iss, observerID, '~');
+            getline(iss, labID, '~');
+            getline(iss, observerID, '~');
 
-        if (stoi(observerID) != 0) { // 0 means there is no Observer assigned to the Lab
-            for (int i{ 0 }; i < observerListSize; i++) {
-                if (observerList[i]->getID() == stoi(observerID)) {
-                    observerTarget = observerList[i];
-                    break;
+            if (stoi(observerID) != 0) { // 0 means there is no Observer assigned to the Lab
+                for (int i{ 0 }; i < observerListSize; i++) {
+                    if (observerList[i]->getID() == stoi(observerID)) {
+                        observerTarget = observerList[i];
+                        break;
+                    }
                 }
+
+                attachObserverToLab(observerTarget, labList[count]);
             }
 
-            attachObserverToLab(observerTarget, labList[count]);
-        }
-
-        while (getline(iss, memberID, '~')) {
-            for (int i{ 0 }; i < memberListSize; i++) {
-                if (memberList[i]->getID() == stoi(memberID)) {
-                    memberTarget = memberList[i];
-                    break;
+            while (getline(iss, memberID, '~')) {
+                for (int i{ 0 }; i < memberListSize; i++) {
+                    if (memberList[i]->getID() == stoi(memberID)) {
+                        memberTarget = memberList[i];
+                        break;
+                    }
                 }
+
+                attachMemberToLab(memberTarget, labList[count]);
             }
 
-            attachMemberToLab(memberTarget, labList[count]);
+            count++;
         }
-
-        count++;
+    }
+    catch (const exception& e) {
+        cout << "There was an error reading data from " << LIST_LINK_FILE << ". Please verify the integrity of the "
+            "file. Closing program..." << endl << endl;
     }
 }
 
@@ -356,13 +388,13 @@ void writeToMemberFile(array<Member*, MEMBER_ARR_SIZE>& memberList) {
 
     for (int i{ 0 }; i < memberListSize; i++) {
         memberFile << memberList[i]->getID() << "~" << memberList[i]->getName() << "~" << memberList[i]->getEmail() <<
-            "~" << memberList[i]->getAddress() << "~" << memberList[i]->getPhoneNum() << "~" << 
+            "~" << memberList[i]->getAddress() << "~" << memberList[i]->getPhoneNum() << "~" <<
             memberList[i]->getLabHours() << "~";
 
         // Add a newline for each entry except the last.
         if (i < memberListSize - 1) {
             memberFile << endl;
-         }
+        }
     }
 
     memberFile.close();

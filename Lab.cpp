@@ -118,7 +118,7 @@ void Lab::print() {
 		cout << left << setw(10) << this->getID() << setw(20) << this->getType() << this->getObserver()->getName() << endl;
 	}
 	else {
-		cout << left << setw(10) << this->getID() << setw(20) << this->getType() << " None Assigned" << endl;
+		cout << left << setw(10) << this->getID() << setw(20) << this->getType() << "None Assigned" << endl;
 	}
 }
 

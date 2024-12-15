@@ -80,4 +80,19 @@ Postconditions: observer is lab's Observer and lab is observer's assignedLab.
 */
 void attachObserverToLab(Observer* observer, Lab* lab);
 
+/*
+This function checks if memberID is already an ID for an existing Member or Observer.
+Preconditions:  None
+Postconditions: It the ID is already taken, false is returned; otherwise, true is returned.
+*/
+bool checkIDAvailability(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList,
+    const int& memberID);
+
+/*
+This function checks if labID is already an ID for an existing Lab.
+Preconditions:  None
+Postconditions: It the ID is already taken, false is returned; otherwise, true is returned.
+*/
+bool checkIDAvailability(array<Lab*, LAB_ARR_SIZE>& labList, const int& labID);
+
 #endif

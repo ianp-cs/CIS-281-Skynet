@@ -20,24 +20,31 @@ void reportMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LA
 
         cout << endl;
 
-        switch (userInput) {
-        case 1:
-            pullMemberReport(memberList, observerList);
-            break;
-        case 2:
-            pullLabReport(labList);
-            break;
-        case 3:
-            pullAllMembersReport(memberList, observerList);
-            break;
-        case 4:
-            pullAllLabsReport(labList);
-            break;
-        case 5:
-            validInput = true;
-            cout << "Returning to main menu..." << endl << endl;
-            break;
-        default:
+        if (cin) {
+            switch (userInput) {
+            case 1:
+                pullMemberReport(memberList, observerList);
+                break;
+            case 2:
+                pullLabReport(labList);
+                break;
+            case 3:
+                pullAllMembersReport(memberList, observerList);
+                break;
+            case 4:
+                pullAllLabsReport(labList);
+                break;
+            case 5:
+                validInput = true;
+                cout << "Returning to main menu..." << endl << endl;
+                break;
+            default:
+                validInput = false;
+                cout << "Invalid input. Please try again." << endl << endl;
+            }
+        }
+        else {
+            clearBuffer(stdin);
             validInput = false;
             cout << "Invalid input. Please try again." << endl << endl;
         }
@@ -46,11 +53,28 @@ void reportMenu(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LA
 
 void pullMemberReport(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observer*, LAB_ARR_SIZE>& observerList) {
     int memberID;
+    string userInput;
+    bool validInput{ false };
 
-    cout << "Enter the Member's ID to pull their report: ";
-    cin >> memberID;
+    clearBuffer(stdin);
 
-    cout << endl;
+    while (validInput == false) {
+        cout << "Enter the Member's ID to pull their report or enter \"0\" to return: ";
+        getline(cin, userInput);
+        cout << endl;
+
+        try {
+            if (stoi(userInput) == 0) {
+                cout << endl;
+                return;
+            }
+            memberID = stoi(userInput);
+            validInput = true;
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Member ID must be a number. Please try again." << endl << endl;
+        }
+    }
 
     for (int i{ 0 }; i < memberListSize; i++) {
         if (memberList[i]->getID() == memberID) {
@@ -72,14 +96,29 @@ void pullMemberReport(array<Member*, MEMBER_ARR_SIZE>& memberList, array<Observe
 }
 
 void pullLabReport(array<Lab*, LAB_ARR_SIZE>& labList) {
-    Lab target;
     int labID;
+    string userInput;
     bool validInput{ false };
 
-    cout << "Enter the Lab's ID to pull their report: ";
-    cin >> labID;
+    clearBuffer(stdin);
 
-    cout << endl;
+    while (validInput == false) {
+        cout << "Enter the Lab's ID to pull their report or enter \"0\" to return: ";
+        getline(cin, userInput);
+        cout << endl;
+
+        try {
+            if (stoi(userInput) == 0) {
+                cout << endl;
+                return;
+            }
+            labID = stoi(userInput);
+            validInput = true;
+        }
+        catch (const exception& e) {
+            cout << "Invalid input. Lab ID must be a number. Please try again." << endl << endl;
+        }
+    }
 
     for (int i{ 0 }; i < labListSize; i++) {
         if (labList[i]->getID() == labID) {
